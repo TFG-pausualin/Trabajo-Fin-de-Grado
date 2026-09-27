@@ -9,6 +9,7 @@ data/raiz/
 data/provisional/
 data/procesado/
 /models/
+/node_modules/
 
 *.parquet
 *.jsonl
@@ -16,3 +17,7 @@ data/procesado/
 
 
 .vscode/
+
+.env
+.env.*
+!.env.example
