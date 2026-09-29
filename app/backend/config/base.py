@@ -26,7 +26,9 @@ class ConfiguracionBase(BaseSettings):
         default="API de análisis de sentimiento de videojuegos",
         validation_alias="APP_NAME"
     )
-
+    
+    database_url: str 
+    
     app_version: str = Field(
         default="1.0.0",
         validation_alias="APP_VERSION"

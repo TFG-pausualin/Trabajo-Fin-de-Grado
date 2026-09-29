@@ -56,7 +56,7 @@ export default function Videojuegos() {
   }, [pagina]);
 
   function seleccionarVideojuego(videojuego: Videojuego) {
-    navigate(`/videojuegos/${videojuego.id}/resenas`, {
+    navigate(`/videojuegos/${videojuego.id}/reseñas`, {
       state: {
         titulo: videojuego.titulo,
       },

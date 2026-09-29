@@ -17,7 +17,6 @@ export default function App() {
         <Route path="/" element={<Inicio />} />
         <Route path="/videojuegos/:videojuegoId/nueva-reseña" element={<Prediccion />} />
         <Route path="/videojuegos" element={<Videojuegos />} />
-        <Route path="/videojuegos/:videojuego/resenas" element={<Reseñas />} />
         <Route path="/videojuegos/:videojuego/reseñas" element={<Reseñas />} />
       </Routes>
     </Router>

@@ -8,6 +8,7 @@ import pandas as pd
 import pyarrow.dataset as ds
 
 from app.backend.videojuegos.models import Resena, Videojuego
+from app.backend.reseñas.services import reseñas_service
 
 
 RUTA_RAIZ_PROYECTO = Path(__file__).resolve().parents[3]
@@ -19,14 +20,14 @@ RUTA_METADATOS = (
     / "meta_Video_Games.jsonl.gz"
 )
 
-RUTA_RESENAS_ETIQUETADAS = (
+RUTA_RESEÑAS_ETIQUETADAS = (
     RUTA_RAIZ_PROYECTO
     / "data"
     / "procesado"
     / "resenas_etiquetadas"
 )
 
-RUTA_RESENAS_ORIGINALES = (
+RUTA_RESEÑAS_ORIGINALES = (
     RUTA_RAIZ_PROYECTO
     / "data"
     / "procesado"
@@ -61,12 +62,12 @@ class VideojuegosService:
     def __init__(
         self,
         ruta_metadatos: Path = RUTA_METADATOS,
-        ruta_resenas_etiquetadas: Path = RUTA_RESENAS_ETIQUETADAS,
-        ruta_resenas_originales: Path = RUTA_RESENAS_ORIGINALES,
+        ruta_reseñas_etiquetadas: Path = RUTA_RESEÑAS_ETIQUETADAS,
+        ruta_reseñas_originales: Path = RUTA_RESEÑAS_ORIGINALES,
     ) -> None:
         self.ruta_metadatos = ruta_metadatos
-        self.ruta_resenas_etiquetadas = ruta_resenas_etiquetadas
-        self.ruta_resenas_originales = ruta_resenas_originales
+        self.ruta_reseñas_etiquetadas = ruta_reseñas_etiquetadas
+        self.ruta_reseñas_originales = ruta_reseñas_originales
 
     @lru_cache(maxsize=1)
     def cargar_datos(self) -> pd.DataFrame:
@@ -75,18 +76,18 @@ class VideojuegosService:
                 f"No se encontró el archivo: {self.ruta_metadatos}"
             )
 
-        archivos_resenas = list(
-            self.ruta_resenas_etiquetadas.glob("*.parquet")
+        archivos_reseñas = list(
+            self.ruta_reseñas_etiquetadas.glob("*.parquet")
         )
-        if not archivos_resenas:
+        if not archivos_reseñas:
             raise FileNotFoundError(
                 "No se encontraron archivos Parquet en: "
-                f"{self.ruta_resenas_etiquetadas}"
+                f"{self.ruta_reseñas_etiquetadas}"
             )
 
-        parent_asin_con_resenas = set(
+        parent_asin_con_reseñas = set(
             pd.read_parquet(
-                self.ruta_resenas_etiquetadas,
+                self.ruta_reseñas_etiquetadas,
                 columns=["parent_asin"],
             )["parent_asin"]
             .dropna()
@@ -103,7 +104,7 @@ class VideojuegosService:
             for linea in archivo:
                 metadatos = json.loads(linea)
                 parent_asin = metadatos.get("parent_asin")
-                if parent_asin not in parent_asin_con_resenas:
+                if parent_asin not in parent_asin_con_reseñas:
                     continue
 
                 videojuegos.append(
@@ -158,28 +159,28 @@ class VideojuegosService:
         ).reset_index(drop=True)
 
     @lru_cache(maxsize=1)
-    def cargar_dataset_resenas(self) -> ds.Dataset:
-        if not self.ruta_resenas_etiquetadas.is_dir():
+    def cargar_dataset_reseñas(self) -> ds.Dataset:
+        if not self.ruta_reseñas_etiquetadas.is_dir():
             raise FileNotFoundError(
                 "No se encontró la carpeta de reseñas etiquetadas: "
-                f"{self.ruta_resenas_etiquetadas}"
+                f"{self.ruta_reseñas_etiquetadas}"
             )
 
         return ds.dataset(
-            self.ruta_resenas_etiquetadas,
+            self.ruta_reseñas_etiquetadas,
             format="parquet",
         )
 
     @lru_cache(maxsize=1)
-    def cargar_dataset_resenas_originales(self) -> ds.Dataset:
-        if not self.ruta_resenas_originales.is_dir():
+    def cargar_dataset_reseñas_originales(self) -> ds.Dataset:
+        if not self.ruta_reseñas_originales.is_dir():
             raise FileNotFoundError(
                 "No se encontró la carpeta de reseñas originales: "
-                f"{self.ruta_resenas_originales}"
+                f"{self.ruta_reseñas_originales}"
             )
 
         return ds.dataset(
-            self.ruta_resenas_originales,
+            self.ruta_reseñas_originales,
             format="parquet",
         )
 
@@ -296,7 +297,7 @@ class VideojuegosService:
 
         return videojuegos, total, total_paginas
 
-    def listar_resenas(
+    def listar_reseñas(
         self,
         videojuego_id: str,
         pagina: int,
@@ -309,11 +310,11 @@ class VideojuegosService:
             "timestamp",
             "verified_purchase",
         ]
-        tabla_etiquetada = self.cargar_dataset_resenas().to_table(
+        tabla_etiquetada = self.cargar_dataset_reseñas().to_table(
             columns=[*claves_union, "review_text_normalized", "sentiment"],
             filter=ds.field("parent_asin") == videojuego_id,
         )
-        tabla_original = self.cargar_dataset_resenas_originales().to_table(
+        tabla_original = self.cargar_dataset_reseñas_originales().to_table(
             columns=[
                 *claves_union,
                 "title",
@@ -342,20 +343,15 @@ class VideojuegosService:
             na_position="last",
         )
 
-        total = len(datos)
-        total_paginas = ceil(total / limite) if total > 0 else 0
-        inicio = (pagina - 1) * limite
-        datos_pagina = datos.iloc[inicio:inicio + limite]
-
-        resenas = []
-        for fila in datos_pagina.itertuples(index=False):
+        reseñas = []
+        for fila in datos.itertuples(index=False):
             imagenes = fila.images
             if hasattr(imagenes, "tolist"):
                 imagenes = imagenes.tolist()
             if not isinstance(imagenes, list):
                 imagenes = []
 
-            resenas.append(
+            reseñas.append(
                 Resena(
                     rating=(
                         None if pd.isna(fila.rating) else int(fila.rating)
@@ -393,7 +389,38 @@ class VideojuegosService:
                 )
             )
 
-        return resenas, total, total_paginas
+        reseñas_guardadas = reseñas_service.listar(videojuego_id)
+        reseñas.extend(
+            Resena(
+                rating=resena.puntuacion,
+                title=resena.titulo,
+                text=resena.texto,
+                images=[{"url": imagen} for imagen in resena.imagenes],
+                asin=None,
+                parent_asin=resena.videojuego_id,
+                user_id=None,
+                timestamp=resena.fecha,
+                helpful_vote=None,
+                verified_purchase=resena.compra_verificada,
+                sentimiento=resena.sentimiento,
+            )
+            for resena in reseñas_guardadas
+        )
+
+        reseñas.sort(
+            key=lambda resena: (
+                resena.timestamp is not None,
+                resena.timestamp,
+            ),
+            reverse=True,
+        )
+
+        total = len(reseñas)
+        total_paginas = ceil(total / limite) if total > 0 else 0
+        inicio = (pagina - 1) * limite
+        reseñas = reseñas[inicio:inicio + limite]
+
+        return reseñas, total, total_paginas
 
 
 videojuegos_service = VideojuegosService()

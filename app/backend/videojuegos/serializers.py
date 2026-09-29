@@ -53,7 +53,7 @@ class ListaVideojuegosSerializer(BaseModel):
     total_paginas: int = Field(ge=0)
 
 
-class ResenaSerializer(BaseModel):
+class ReseñaSerializer(BaseModel):
     rating: int | None = Field(default=None, ge=1, le=5)
     title: str | None = None
     text: str
@@ -67,8 +67,8 @@ class ResenaSerializer(BaseModel):
     sentimiento: Literal["negativo", "neutral", "positivo"]
 
 
-class ListaResenasSerializer(BaseModel):
-    resultados: list[ResenaSerializer]
+class ListaReseñasSerializer(BaseModel):
+    resultados: list[ReseñaSerializer]
     pagina: int = Field(ge=1)
     limite: int = Field(ge=1)
     total: int = Field(ge=0)

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, Query, status
 
 from app.backend.videojuegos.serializers import (
-    ListaResenasSerializer,
+    ListaReseñasSerializer,
     ListaVideojuegosSerializer,
-    ResenaSerializer,
+    ReseñaSerializer,
     VideojuegoDetalleSerializer,
     VideojuegoSerializer,
 )
@@ -71,28 +71,28 @@ def listar_videojuegos(
 
 
 @router.get(
-    "/{videojuego_id}/resenas",
-    response_model=ListaResenasSerializer,
+    "/{videojuego_id}/reseñas",
+    response_model=ListaReseñasSerializer,
     status_code=status.HTTP_200_OK,
     summary="Listar reseñas de un videojuego",
 )
-def listar_resenas_videojuego(
+def listar_reseñas_videojuego(
     videojuego_id: str,
     pagina: int = Query(default=1, ge=1),
     limite: int = Query(default=20, ge=1, le=100),
-) -> ListaResenasSerializer:
+) -> ListaReseñasSerializer:
     try:
-        resenas, total, total_paginas = (
-            videojuegos_service.listar_resenas(
+        reseñas, total, total_paginas = (
+            videojuegos_service.listar_reseñas(
                 videojuego_id=videojuego_id,
                 pagina=pagina,
                 limite=limite,
             )
         )
 
-        return ListaResenasSerializer(
+        return ListaReseñasSerializer(
             resultados=[
-                ResenaSerializer(
+                ReseñaSerializer(
                     rating=resena.rating,
                     title=resena.title,
                     text=resena.text,
@@ -105,7 +105,7 @@ def listar_resenas_videojuego(
                     verified_purchase=resena.verified_purchase,
                     sentimiento=resena.sentimiento,
                 )
-                for resena in resenas
+                for resena in reseñas
             ],
             pagina=pagina,
             limite=limite,

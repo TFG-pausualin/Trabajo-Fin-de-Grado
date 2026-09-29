@@ -13,6 +13,7 @@ from app.backend.prediccion.services import (
     PrediccionService,
     obtener_prediccion_service,
 )
+from app.backend.reseñas.services import reseñas_service
 
 
 router = APIRouter()
@@ -44,6 +45,7 @@ def predecir_sentimiento(
         prediccion = servicio.predecir(
             solicitud
         )
+        reseñas_service.guardar_prediccion(prediccion)
 
         return RespuestaPrediccionSerializer(
             videojuego_id=prediccion.videojuego_id,

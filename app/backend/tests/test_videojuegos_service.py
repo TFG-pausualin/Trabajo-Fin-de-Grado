@@ -6,7 +6,7 @@ import pandas as pd
 from app.backend.videojuegos.services import VideojuegosService
 
 
-def test_lista_videojuegos_y_resenas_desde_archivos_etiquetados(tmp_path):
+def test_lista_videojuegos_y_reseñas_desde_archivos_etiquetados(tmp_path):
     ruta_metadatos = tmp_path / "meta_Video_Games.jsonl.gz"
     metadatos = [
         {
@@ -22,7 +22,7 @@ def test_lista_videojuegos_y_resenas_desde_archivos_etiquetados(tmp_path):
             "empty_field": [],
         },
         {
-            "parent_asin": "SIN_RESENAS",
+            "parent_asin": "SIN_reseñas",
             "title": "Juego sin reseñas",
         },
     ]
@@ -30,8 +30,8 @@ def test_lista_videojuegos_y_resenas_desde_archivos_etiquetados(tmp_path):
         for metadato in metadatos:
             archivo.write(json.dumps(metadato) + "\n")
 
-    ruta_resenas = tmp_path / "resenas_etiquetadas"
-    ruta_resenas.mkdir()
+    ruta_reseñas = tmp_path / "reseñas_etiquetadas"
+    ruta_reseñas.mkdir()
     pd.DataFrame(
         {
             "parent_asin": ["GAME1", "GAME1"],
@@ -44,9 +44,9 @@ def test_lista_videojuegos_y_resenas_desde_archivos_etiquetados(tmp_path):
             "review_text_normalized": ["buena historia", "muchos errores"],
             "sentiment": ["positivo", "negativo"],
         }
-    ).to_parquet(ruta_resenas / "resenas_etiquetadas_0000.parquet")
+    ).to_parquet(ruta_reseñas / "reseñas_etiquetadas_0000.parquet")
 
-    ruta_originales = tmp_path / "resenas_sin_duplicados"
+    ruta_originales = tmp_path / "reseñas_sin_duplicados"
     ruta_originales.mkdir()
     pd.DataFrame(
         {
@@ -63,17 +63,17 @@ def test_lista_videojuegos_y_resenas_desde_archivos_etiquetados(tmp_path):
             "helpful_vote": [0, 3],
             "verified_purchase": [True, False],
         }
-    ).to_parquet(ruta_originales / "resenas_0000.parquet")
+    ).to_parquet(ruta_originales / "reseñas_0000.parquet")
 
     servicio = VideojuegosService(
         ruta_metadatos=ruta_metadatos,
-        ruta_resenas_etiquetadas=ruta_resenas,
-        ruta_resenas_originales=ruta_originales,
+        ruta_reseñas_etiquetadas=ruta_reseñas,
+        ruta_reseñas_originales=ruta_originales,
     )
 
     videojuegos, total, _ = servicio.listar_videojuegos(pagina=1, limite=20)
     detalle = servicio.obtener_videojuego("GAME1")
-    resenas, total_resenas, paginas = servicio.listar_resenas(
+    reseñas, total_reseñas, paginas = servicio.listar_reseñas(
         videojuego_id="GAME1",
         pagina=1,
         limite=1,
@@ -86,9 +86,9 @@ def test_lista_videojuegos_y_resenas_desde_archivos_etiquetados(tmp_path):
     assert detalle.detalles["description"] == ["Descripción de prueba"]
     assert detalle.detalles["features"] == ["Modo historia", "Multijugador"]
     assert "empty_field" not in detalle.detalles
-    assert total_resenas == 2
+    assert total_reseñas == 2
     assert paginas == 2
-    assert resenas[0].title == "No funciona"
-    assert resenas[0].text == "Se bloquea al iniciar"
-    assert resenas[0].sentimiento == "negativo"
-    assert resenas[0].helpful_vote == 3
+    assert reseñas[0].title == "No funciona"
+    assert reseñas[0].text == "Se bloquea al iniciar"
+    assert reseñas[0].sentimiento == "negativo"
+    assert reseñas[0].helpful_vote == 3

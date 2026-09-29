@@ -96,7 +96,7 @@ export default function Prediccion() {
           type="button"
           className="boton-volver"
           onClick={() =>
-            navigate(videojuegoId ? `/videojuegos/${videojuegoId}/resenas` : "/videojuegos")
+            navigate(videojuegoId ? `/videojuegos/${videojuegoId}/reseñas` : "/videojuegos")
           }
         >
           Volver al videojuego

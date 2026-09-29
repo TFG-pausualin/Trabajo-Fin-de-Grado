@@ -33,7 +33,7 @@ export interface Resena {
   sentimiento: "positivo" | "neutral" | "negativo";
 }
 
-export interface RespuestaResenas {
+export interface RespuestaReseñas {
   resultados: Resena[];
   pagina: number;
   limite: number;
@@ -79,17 +79,17 @@ export async function obtenerDetalleVideojuego(
   return respuesta.json();
 }
 
-export async function obtenerResenas(
+export async function obtenerReseñas(
   videojuegoId: string,
   pagina = 1,
   limite = 20,
-): Promise<RespuestaResenas> {
+): Promise<RespuestaReseñas> {
   const parametros = new URLSearchParams({
     pagina: String(pagina),
     limite: String(limite),
   });
   const respuesta = await fetch(
-    `${URL_VIDEOJUEGOS}/${encodeURIComponent(videojuegoId)}/resenas?${parametros}`,
+    `${URL_VIDEOJUEGOS}/${encodeURIComponent(videojuegoId)}/reseñas?${parametros}`,
   );
 
   if (!respuesta.ok) {

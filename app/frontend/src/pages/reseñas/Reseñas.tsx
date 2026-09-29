@@ -3,14 +3,14 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 import {
   obtenerDetalleVideojuego,
-  obtenerResenas,
+  obtenerReseñas,
   type DetalleVideojuego,
   type Resena,
 } from "../../services/videojuegosService";
 
 import "../../styles/reseñas.css";
 
-const RESENAS_POR_PAGINA = 20;
+const RESEÑAS_POR_PAGINA = 20;
 
 function obtenerImagenes(valor: unknown): Record<string, unknown>[] {
   if (!Array.isArray(valor)) return [];
@@ -60,7 +60,7 @@ function etiquetaDetalle(campo: string): string {
     .replace(/\b\w/g, (letra) => letra.toLocaleUpperCase("es-ES"));
 }
 
-export default function Resenas() {
+export default function Reseñas() {
   const navigate = useNavigate();
   const location = useLocation();
   const { videojuego: videojuegoId } = useParams();
@@ -68,7 +68,7 @@ export default function Resenas() {
   const [videojuego, setVideojuego] = useState<DetalleVideojuego | null>(null);
   const [cargandoDetalle, setCargandoDetalle] = useState(true);
   const [errorDetalle, setErrorDetalle] = useState("");
-  const [resenas, setResenas] = useState<Resena[]>([]);
+  const [reseñas, setReseñas] = useState<Resena[]>([]);
   const [pagina, setPagina] = useState(1);
   const [total, setTotal] = useState(0);
   const [totalPaginas, setTotalPaginas] = useState(0);
@@ -106,21 +106,21 @@ export default function Resenas() {
   useEffect(() => {
     let activa = true;
 
-    async function cargarResenas() {
+    async function cargarReseñas() {
       if (!videojuegoId) return;
 
       setCargando(true);
       setError("");
 
       try {
-        const respuesta = await obtenerResenas(
+        const respuesta = await obtenerReseñas(
           videojuegoId,
           pagina,
-          RESENAS_POR_PAGINA,
+          RESEÑAS_POR_PAGINA,
         );
 
         if (!activa) return;
-        setResenas(respuesta.resultados);
+        setReseñas(respuesta.resultados);
         setTotal(respuesta.total);
         setTotalPaginas(respuesta.total_paginas);
       } catch {
@@ -130,7 +130,7 @@ export default function Resenas() {
       }
     }
 
-    cargarResenas();
+    cargarReseñas();
 
     return () => {
       activa = false;
@@ -152,17 +152,17 @@ export default function Resenas() {
   );
 
   return (
-    <main className="pagina-resenas">
-      <section className="contenido-resenas">
+    <main className="pagina-reseñas">
+      <section className="contenido-reseñas">
         <button
           type="button"
-          className="boton-volver-resenas"
+          className="boton-volver-reseñas"
           onClick={() => navigate("/videojuegos")}
         >
           ← Volver a videojuegos
         </button>
 
-        <header className="cabecera-resenas">
+        <header className="cabecera-reseñas">
           <span className="etiqueta-videojuego">
             Videojuego seleccionado
           </span>
@@ -175,11 +175,11 @@ export default function Resenas() {
         </header>
 
         {cargandoDetalle && (
-          <p className="mensaje-resenas">Cargando ficha del videojuego...</p>
+          <p className="mensaje-reseñas">Cargando ficha del videojuego...</p>
         )}
 
         {errorDetalle && (
-          <p className="mensaje-resenas mensaje-error-resenas">{errorDetalle}</p>
+          <p className="mensaje-reseñas mensaje-error-reseñas">{errorDetalle}</p>
         )}
 
         {videojuego && (
@@ -237,7 +237,7 @@ export default function Resenas() {
           </section>
         )}
 
-        <div className="acciones-resenas">
+        <div className="acciones-reseñas">
           <h2>Reseñas etiquetadas ({total.toLocaleString("es-ES")})</h2>
 
           <button
@@ -249,13 +249,13 @@ export default function Resenas() {
           </button>
         </div>
 
-        {cargando && <p className="mensaje-resenas">Cargando reseñas...</p>}
+        {cargando && <p className="mensaje-reseñas">Cargando reseñas...</p>}
 
-        {error && <p className="mensaje-resenas mensaje-error-resenas">{error}</p>}
+        {error && <p className="mensaje-reseñas mensaje-error-reseñas">{error}</p>}
 
-        {!cargando && !error && resenas.length > 0 && (
-          <div className="lista-resenas">
-            {resenas.map((resena, indice) => (
+        {!cargando && !error && reseñas.length > 0 && (
+          <div className="lista-reseñas">
+            {reseñas.map((resena, indice) => (
               <article
                 key={`${resena.asin ?? "sin-asin"}-${resena.timestamp ?? "sin-fecha"}-${indice}`}
                 className="tarjeta-resena"
@@ -330,18 +330,18 @@ export default function Resenas() {
           </div>
         )}
 
-        {!cargando && !error && resenas.length === 0 && (
-          <div className="sin-resenas">
+        {!cargando && !error && reseñas.length === 0 && (
+          <div className="sin-reseñas">
             <h2>Todavía no hay reseñas</h2>
             <p>No hay reseñas etiquetadas disponibles para {nombreVideojuego}.</p>
           </div>
         )}
 
         {!cargando && !error && total > 0 && (
-          <nav className="paginacion-resenas" aria-label="Paginación de reseñas">
+          <nav className="paginacion-reseñas" aria-label="Paginación de reseñas">
             <button
               type="button"
-              className="control-paginacion-resenas"
+              className="control-paginacion-reseñas"
               onClick={() => setPagina((actual) => actual - 1)}
               disabled={pagina <= 1}
             >
@@ -352,7 +352,7 @@ export default function Resenas() {
             </span>
             <button
               type="button"
-              className="control-paginacion-resenas"
+              className="control-paginacion-reseñas"
               onClick={() => setPagina((actual) => actual + 1)}
               disabled={pagina >= totalPaginas}
             >

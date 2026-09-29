@@ -8,6 +8,7 @@ __pycache__/
 data/raiz/
 data/provisional/
 data/procesado/
+data/reseñas_generadas.sqlite3
 /models/
 /node_modules/
 
