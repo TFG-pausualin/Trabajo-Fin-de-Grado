@@ -1,0 +1,281 @@
+.pagina-videojuegos {
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #35c88a;
+  color: #252525;
+}
+
+.contenido-videojuegos {
+  width: min(1000px, 100%);
+  margin: 0 auto;
+}
+
+.boton-volver-videojuegos {
+  margin-bottom: 1.5rem;
+  padding: 0.7rem 1.3rem;
+
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+
+  background-color: transparent;
+  color: #ffffff;
+
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.boton-volver-videojuegos:hover {
+  background-color: #ffffff;
+  color: #252525;
+  transform: translateY(-2px);
+}
+
+.cabecera-videojuegos {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.cabecera-videojuegos h1 {
+  margin-bottom: 0.75rem;
+  color: #f8dda1;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  line-height: 1.1;
+}
+
+.cabecera-videojuegos p {
+  color: #ffffff;
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+
+.buscador-videojuegos {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  width: min(600px, 100%);
+  margin: 0 auto 2rem;
+}
+
+.buscador-videojuegos label {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.buscador-videojuegos input {
+  width: 100%;
+  padding: 1rem 1.2rem;
+
+  border: 2px solid transparent;
+  border-radius: 999px;
+
+  background-color: #ffffff;
+  color: #252525;
+
+  font: inherit;
+  outline: none;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 10%);
+}
+
+.buscador-videojuegos input:focus {
+  border-color: #f8dda1;
+  box-shadow: 0 0 0 4px rgb(248 221 161 / 30%);
+}
+
+.lista-videojuegos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.tarjeta-videojuego {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  width: 100%;
+  min-height: 150px;
+  padding: 1.25rem;
+
+  border: 2px solid transparent;
+  border-radius: 1rem;
+
+  background-color: #ffffff;
+  color: #252525;
+
+  text-align: left;
+  cursor: pointer;
+
+  box-shadow: 0 10px 25px rgb(0 0 0 / 12%);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.tarjeta-videojuego:hover {
+  border-color: #f8dda1;
+  box-shadow: 0 16px 30px rgb(0 0 0 / 17%);
+  transform: translateY(-3px);
+}
+
+.tarjeta-videojuego:focus-visible {
+  outline: 3px solid #252525;
+  outline-offset: 4px;
+}
+
+.icono-videojuego {
+  display: grid;
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+
+  border-radius: 50%;
+  background-color: #f8dda1;
+
+  font-size: 1.5rem;
+}
+
+.nombre-videojuego {
+  flex-grow: 1;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.metricas-destacadas-videojuego {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.media-destacada-videojuego {
+  color: #16794f;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.conteo-destacado-videojuego {
+  color: #4d5a54;
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.etiqueta-calificacion-videojuego {
+  color: #16794f;
+  font-weight: 700;
+}
+
+.flecha-videojuego {
+  color: #35c88a;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.sin-resultados {
+  padding: 2rem;
+  border-radius: 1rem;
+  background-color: #ffffff;
+  text-align: center;
+}
+
+@media (max-width: 700px) {
+  .pagina-videojuegos {
+    padding: 1.25rem;
+  }
+
+  .lista-videojuegos {
+    grid-template-columns: 1fr;
+  }
+
+  .tarjeta-videojuego {
+    min-height: 135px;
+  }
+}
+
+.informacion-videojuego {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.datos-videojuego {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  color: #666666;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.mensaje-videojuegos {
+  padding: 2rem;
+  border-radius: 1rem;
+  background-color: #ffffff;
+  color: #333333;
+  text-align: center;
+  box-shadow: 0 10px 25px rgb(0 0 0 / 12%);
+}
+
+.mensaje-error {
+  color: #a52a2a;
+}
+
+.paginacion-videojuegos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  background-color: #ffffff;
+}
+
+.control-paginacion {
+  padding: 0.7rem 1rem;
+  border: 1px solid #d9dedb;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  color: #252525;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.control-paginacion:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.control-paginacion:focus-visible {
+  outline: 3px solid #252525;
+  outline-offset: 3px;
+}
+
+.estado-paginacion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: center;
+}
+
+@media (max-width: 500px) {
+  .paginacion-videojuegos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .estado-paginacion {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+}
