@@ -1,0 +1,516 @@
+.pagina-estadisticas {
+  display: block;
+  min-height: calc(100vh - 4rem);
+  min-height: calc(100dvh - 4rem);
+  padding: 2rem;
+  background-color: #f3f8f5;
+  color: #25372d;
+  text-align: left;
+}
+
+.contenido-estadisticas {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+.cabecera-estadisticas,
+.encabezado-panel-estadisticas {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.cabecera-estadisticas {
+  margin-bottom: 1.75rem;
+}
+
+.eyebrow-estadisticas {
+  margin: 0 0 0.4rem;
+  color: #16794f;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.cabecera-estadisticas h1 {
+  margin: 0 0 0.5rem;
+  color: #203b2d;
+  font-size: 2.4rem;
+  line-height: 1.15;
+}
+
+.cabecera-estadisticas > div > p:last-child,
+.encabezado-panel-estadisticas p {
+  margin: 0;
+  color: #627169;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.boton-actualizar-estadisticas,
+.estado-error-estadisticas button {
+  flex: 0 0 auto;
+  padding: 0.65rem 1rem;
+  border: 1px solid #16794f;
+  border-radius: 0.45rem;
+  background-color: #ffffff;
+  color: #16794f;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.boton-actualizar-estadisticas:hover,
+.estado-error-estadisticas button:hover {
+  background-color: #e8f5ee;
+}
+
+.boton-actualizar-estadisticas:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.boton-actualizar-estadisticas:focus-visible,
+.estado-error-estadisticas button:focus-visible,
+.prediccion-reciente-estadisticas:focus-visible,
+.resultados-busqueda-estadisticas button:focus-visible,
+.titulo-videojuego-estadisticas button:focus-visible {
+  outline: 3px solid #203b2d;
+  outline-offset: 3px;
+}
+
+.estado-estadisticas {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border: 1px solid #dce8e0;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  color: #53615a;
+}
+
+.estado-error-estadisticas {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-color: #efc8c4;
+  color: #a52a2a;
+}
+
+.indicadores-estadisticas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.indicador-estadisticas {
+  display: flex;
+  min-width: 0;
+  min-height: 112px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid #dce8e0;
+  border-radius: 0.55rem;
+  background-color: #ffffff;
+}
+
+.indicador-estadisticas span {
+  color: #5d6e64;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.indicador-estadisticas strong {
+  color: #203b2d;
+  font-size: 1.8rem;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.indicador-principal-estadisticas {
+  border-top: 3px solid #16794f;
+}
+
+.rejilla-estadisticas {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas:
+    "sentimiento recientes"
+    "videojuego recientes";
+  grid-template-rows: auto auto;
+  align-items: stretch;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.panel-distribucion-estadisticas {
+  grid-area: sentimiento;
+}
+
+.panel-recientes-estadisticas {
+  grid-area: recientes;
+}
+
+.panel-videojuego-estadisticas {
+  grid-area: videojuego;
+  margin-bottom: 0;
+}
+
+.panel-estadisticas {
+  min-width: 0;
+  padding: 1.25rem;
+  border: 1px solid #dce8e0;
+  border-radius: 0.55rem;
+  background-color: #ffffff;
+}
+
+.encabezado-panel-estadisticas {
+  align-items: center;
+  margin-bottom: 1.1rem;
+}
+
+.encabezado-panel-estadisticas h2 {
+  margin: 0 0 0.35rem;
+  color: #203b2d;
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+
+.percepcion-estadisticas,
+.etiqueta-prediccion-estadisticas {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 750;
+  text-transform: capitalize;
+}
+
+.sentimiento-positivo {
+  background-color: #dff4e8;
+  color: #16794f;
+}
+
+.sentimiento-neutral {
+  background-color: #fff1c7;
+  color: #806000;
+}
+
+.sentimiento-negativo {
+  background-color: #ffe3e0;
+  color: #a52a2a;
+}
+
+.lista-distribucion-estadisticas {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.fila-distribucion-estadisticas {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.datos-distribucion-estadisticas {
+  display: grid;
+  grid-template-columns: 0.65rem minmax(5rem, 1fr) auto 3.5rem;
+  align-items: center;
+  gap: 0.6rem;
+  color: #48574e;
+  font-size: 0.9rem;
+}
+
+.datos-distribucion-estadisticas strong {
+  color: #25372d;
+  font-variant-numeric: tabular-nums;
+}
+
+.punto-sentimiento {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+}
+
+.punto-positivo,
+.barra-positivo {
+  background-color: #198754;
+}
+
+.punto-neutral,
+.barra-neutral {
+  background-color: #e0aa19;
+}
+
+.punto-negativo,
+.barra-negativo {
+  background-color: #c94a40;
+}
+
+.porcentaje-distribucion-estadisticas {
+  color: #63736a;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.pista-distribucion-estadisticas {
+  height: 0.55rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background-color: #edf2ee;
+}
+
+.barra-distribucion-estadisticas {
+  display: block;
+  height: 100%;
+  min-width: 0;
+  border-radius: inherit;
+  transition: width 0.35s ease;
+}
+
+.lista-predicciones-estadisticas,
+.resultados-busqueda-estadisticas {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lista-predicciones-estadisticas li + li {
+  border-top: 1px solid #e7eee9;
+}
+
+.prediccion-reciente-estadisticas {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.prediccion-reciente-estadisticas:hover .contenido-prediccion-estadisticas > strong {
+  color: #16794f;
+}
+
+.contenido-prediccion-estadisticas {
+  display: grid;
+  min-width: 0;
+  gap: 0.2rem;
+}
+
+.contenido-prediccion-estadisticas strong,
+.contenido-prediccion-estadisticas span,
+.contenido-prediccion-estadisticas time {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contenido-prediccion-estadisticas strong {
+  color: #26382e;
+  font-size: 0.95rem;
+}
+
+.contenido-prediccion-estadisticas span,
+.contenido-prediccion-estadisticas time {
+  color: #65736b;
+  font-size: 0.8rem;
+}
+
+.sin-predicciones-estadisticas,
+.mensaje-error-estadisticas {
+  margin: 0;
+  color: #66756c;
+  font-size: 0.9rem;
+}
+
+.mensaje-error-estadisticas {
+  margin-top: 0.5rem;
+  color: #a52a2a;
+}
+
+.busqueda-estadisticas {
+  display: grid;
+  max-width: 620px;
+  gap: 0.45rem;
+  color: #34483b;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.busqueda-estadisticas input {
+  width: 100%;
+  min-height: 2.8rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid #cad8cf;
+  border-radius: 0.45rem;
+  background-color: #ffffff;
+  color: #26382e;
+  font: inherit;
+  font-weight: 400;
+}
+
+.busqueda-estadisticas input:focus {
+  border-color: #16794f;
+  outline: 3px solid rgb(22 121 79 / 15%);
+}
+
+.resultados-busqueda-estadisticas {
+  width: min(620px, 100%);
+  max-height: 16rem;
+  margin-top: 0.4rem;
+  overflow-y: auto;
+  border: 1px solid #dce8e0;
+  border-radius: 0.45rem;
+}
+
+.resultados-busqueda-estadisticas li + li {
+  border-top: 1px solid #e7eee9;
+}
+
+.resultados-busqueda-estadisticas button {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.7rem 0.8rem;
+  border: 0;
+  background: #ffffff;
+  color: #26382e;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.resultados-busqueda-estadisticas button:hover {
+  background-color: #f0f7f3;
+}
+
+.resultados-busqueda-estadisticas small {
+  color: #64736b;
+}
+
+.detalle-metricas-videojuego {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e1eae4;
+}
+
+.titulo-videojuego-estadisticas {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  color: #25372d;
+}
+
+.titulo-videojuego-estadisticas strong {
+  overflow-wrap: anywhere;
+}
+
+.titulo-videojuego-estadisticas button {
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #16794f;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.resumen-videojuego-estadisticas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.resumen-videojuego-estadisticas > div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.resumen-videojuego-estadisticas span {
+  color: #65736b;
+  font-size: 0.82rem;
+}
+
+.resumen-videojuego-estadisticas strong {
+  color: #25372d;
+  font-size: 1rem;
+}
+
+.texto-sentimiento-positivo {
+  color: #16794f !important;
+}
+
+.texto-sentimiento-neutral {
+  color: #806000 !important;
+}
+
+.texto-sentimiento-negativo {
+  color: #a52a2a !important;
+}
+
+@media (max-width: 760px) {
+  .pagina-estadisticas {
+    padding: 1.25rem;
+  }
+
+  .rejilla-estadisticas {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "sentimiento"
+      "recientes"
+      "videojuego";
+    grid-template-rows: auto auto auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .cabecera-estadisticas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cabecera-estadisticas h1 {
+    font-size: 2rem;
+  }
+
+  .boton-actualizar-estadisticas {
+    align-self: flex-start;
+  }
+
+  .indicadores-estadisticas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .indicador-estadisticas {
+    min-height: 90px;
+  }
+
+  .estado-error-estadisticas,
+  .prediccion-reciente-estadisticas {
+    align-items: flex-start;
+  }
+
+  .estado-error-estadisticas {
+    flex-direction: column;
+  }
+
+  .resumen-videojuego-estadisticas {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
