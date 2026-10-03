@@ -26,6 +26,9 @@ function urlImagen(imagen: Record<string, unknown>): string | null {
     "hi_res",
     "large",
     "large_image_url",
+    "original",
+    "image_url",
+    "url",
     "medium_image_url",
     "thumb",
     "small_image_url",
@@ -183,14 +186,6 @@ export default function Reseñas() {
   return (
     <main className="pagina-reseñas">
       <section className="contenido-reseñas">
-        <button
-          type="button"
-          className="boton-volver-reseñas"
-          onClick={() => navigate("/videojuegos")}
-        >
-          ← Volver a videojuegos
-        </button>
-
         <header className="cabecera-reseñas">
           <span className="etiqueta-videojuego">
             Videojuego seleccionado
@@ -233,7 +228,7 @@ export default function Reseñas() {
                       : `${videojuego.puntuacion_media.toFixed(1)} / 5`}
                   </span>
                   <span>
-                    {videojuego.numero_valoraciones.toLocaleString("es-ES")} valoraciones
+                    {videojuego.numero_resenas.toLocaleString("es-ES")} reseñas
                   </span>
                 </div>
               </div>

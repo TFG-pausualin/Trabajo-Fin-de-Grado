@@ -52,23 +52,38 @@
   line-height: 1.6;
 }
 
-.buscador-videojuegos {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-
-  width: min(600px, 100%);
+.filtros-videojuegos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  width: min(800px, 100%);
   margin: 0 auto 2rem;
+  text-align: left;
 }
 
-.buscador-videojuegos label {
+.campo-filtro-videojuegos {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.control-etiqueta-videojuego {
+  position: relative;
+}
+
+.campo-filtro-videojuegos label {
   color: #ffffff;
   font-weight: 700;
 }
 
-.buscador-videojuegos input {
+.campo-filtro-videojuegos input {
+  display: block;
   width: 100%;
-  padding: 1rem 1.2rem;
+  max-width: 100%;
+  min-width: 0;
+  height: 3.25rem;
+  padding: 0 1.2rem;
 
   border: 2px solid transparent;
   border-radius: 999px;
@@ -81,9 +96,40 @@
   box-shadow: 0 8px 20px rgb(0 0 0 / 10%);
 }
 
-.buscador-videojuegos input:focus {
+.campo-filtro-videojuegos input:focus {
   border-color: #f8dda1;
   box-shadow: 0 0 0 4px rgb(248 221 161 / 30%);
+}
+
+.opciones-etiqueta-videojuego {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 0.35rem);
+  left: 0;
+  display: grid;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #d9dedb;
+  border-radius: 0.75rem;
+  background-color: #ffffff;
+  box-shadow: 0 8px 20px rgb(0 0 0 / 16%);
+}
+
+.opcion-etiqueta-videojuego {
+  width: 100%;
+  padding: 0.85rem 1.2rem;
+  border: 0;
+  background-color: #ffffff;
+  color: #252525;
+  font: inherit;
+  text-align: left;
+  text-transform: capitalize;
+  cursor: pointer;
+}
+
+.opcion-etiqueta-videojuego:hover,
+.opcion-etiqueta-activa {
+  background-color: #e8f8ef;
 }
 
 .lista-videojuegos {
@@ -99,10 +145,11 @@
 
   width: 100%;
   min-height: 150px;
-  padding: 1.25rem;
+  padding: 2.75rem 1.25rem 1.25rem;
 
   border: 2px solid transparent;
   border-radius: 1rem;
+  position: relative;
 
   background-color: #ffffff;
   color: #252525;
@@ -169,8 +216,33 @@
 }
 
 .etiqueta-calificacion-videojuego {
-  color: #16794f;
+  position: absolute;
+  top: 0.7rem;
+  right: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 0.8rem;
   font-weight: 700;
+  line-height: 1;
+  text-transform: capitalize;
+}
+
+.etiqueta-negativa {
+  background-color: #dc2626;
+}
+
+.etiqueta-positiva {
+  background-color: #15803d;
+}
+
+.etiqueta-neutral {
+  background-color: #facc15;
+  color: #422006;
 }
 
 .flecha-videojuego {
@@ -189,6 +261,10 @@
 @media (max-width: 700px) {
   .pagina-videojuegos {
     padding: 1.25rem;
+  }
+
+  .filtros-videojuegos {
+    grid-template-columns: 1fr;
   }
 
   .lista-videojuegos {

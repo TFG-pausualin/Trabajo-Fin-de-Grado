@@ -5,6 +5,8 @@ export interface Videojuego {
   titulo: string;
   puntuacion_media: number | null;
   numero_valoraciones: number;
+  numero_resenas: number;
+  etiqueta_sentimiento: "negativo" | "neutral" | "positivo" | null;
   categoria_principal: string | null;
   tienda: string | null;
 }
@@ -69,12 +71,14 @@ export async function obtenerVideojuegos(
   pagina = 1,
   limite = 20,
   busqueda = "",
+  etiqueta = "",
 ): Promise<RespuestaVideojuegos> {
   const parametros = new URLSearchParams({
     pagina: String(pagina),
     limite: String(limite),
   });
   if (busqueda) parametros.set("busqueda", busqueda);
+  if (etiqueta) parametros.set("etiqueta", etiqueta);
   const datos = await solicitarApi<RespuestaPaginadaApi<Videojuego>>(
     `videojuegos/?${parametros}`,
   );

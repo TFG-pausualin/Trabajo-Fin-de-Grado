@@ -2,7 +2,9 @@ import gzip
 import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
+import pandas as pd
 from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
@@ -44,6 +46,34 @@ class ImportGameDataImagenesTests(SimpleTestCase):
 				}
 			},
 		)
+
+
+class ImportGameDataEstadisticasResenasTests(SimpleTestCase):
+	@patch("videojuegos.management.commands.import_game_data.pd.read_parquet")
+	def test_cuenta_todas_las_resenas_y_solo_puntua_las_calificadas(
+		self,
+		leer_parquet,
+	):
+		leer_parquet.return_value = pd.DataFrame(
+			[
+				{"parent_asin": "JUEGO1", "rating": 4, "sentiment": "positivo"},
+				{"parent_asin": "JUEGO1", "rating": None, "sentiment": "neutral"},
+				{"parent_asin": "JUEGO2", "rating": None, "sentiment": "negativo"},
+			]
+		)
+
+		estadisticas = Command()._obtener_estadisticas_resenas(
+			[Path("resenas.parquet")]
+		).set_index("parent_asin")
+
+		self.assertEqual(estadisticas.loc["JUEGO1", "numero_valoraciones"], 1)
+		self.assertEqual(estadisticas.loc["JUEGO1", "numero_resenas"], 2)
+		self.assertEqual(estadisticas.loc["JUEGO1", "puntuacion_media"], 4)
+		self.assertEqual(estadisticas.loc["JUEGO2", "numero_valoraciones"], 0)
+		self.assertEqual(estadisticas.loc["JUEGO2", "numero_resenas"], 1)
+		self.assertEqual(estadisticas.loc["JUEGO1", "sentimientos_positivos"], 1)
+		self.assertEqual(estadisticas.loc["JUEGO1", "sentimientos_neutrales"], 1)
+		self.assertEqual(estadisticas.loc["JUEGO2", "sentimientos_negativos"], 1)
 
 
 class VideojuegoSoloLecturaTests(TestCase):
@@ -112,18 +142,69 @@ class VideojuegoSoloLecturaTests(TestCase):
 		self.assertEqual(respuesta.data["count"], 1)
 		self.assertEqual(respuesta.data["results"][0]["id"], self.videojuego.id)
 
-	def test_catalogo_filtra_por_etiqueta_de_calificacion_general(self):
+	def test_catalogo_filtra_por_sentimiento_mayoritario(self):
 		Videojuego.objects.create(
 			id="B009876543",
-			titulo="Low-rated game",
-			puntuacion_media=2.2,
+			titulo="Negative sentiment game",
+			puntuacion_media=4.5,
+			numero_valoraciones=1,
+			sentimientos_positivos=1,
+			sentimientos_negativos=3,
 		)
 
 		respuesta = self.client.get(
 			reverse("videojuego-list"),
-			{"busqueda": "NEGATIVA"},
+			{"etiqueta": "NEGATIVA"},
 		)
 
 		self.assertEqual(respuesta.status_code, 200)
 		self.assertEqual(respuesta.data["count"], 1)
 		self.assertEqual(respuesta.data["results"][0]["id"], "B009876543")
+		self.assertEqual(
+			respuesta.data["results"][0]["etiqueta_sentimiento"],
+			"negativo",
+		)
+
+	def test_empate_de_sentimientos_se_resuelve_con_la_puntuacion(self):
+		Videojuego.objects.create(
+			id="B009876543",
+			titulo="Tied sentiment game",
+			puntuacion_media=4.5,
+			numero_valoraciones=1,
+			sentimientos_positivos=2,
+			sentimientos_neutrales=2,
+		)
+
+		respuesta = self.client.get(
+			reverse("videojuego-detail", args=["B009876543"]),
+		)
+
+		self.assertEqual(respuesta.status_code, 200)
+		self.assertEqual(respuesta.data["etiqueta_sentimiento"], "positivo")
+
+	def test_empate_entre_positivo_y_negativo_se_resuelve_con_puntuacion(self):
+		Videojuego.objects.create(
+			id="B009876543",
+			titulo="Positive negative tie game",
+			puntuacion_media=4.5,
+			numero_valoraciones=1,
+			sentimientos_positivos=2,
+			sentimientos_negativos=2,
+		)
+
+		respuesta = self.client.get(
+			reverse("videojuego-detail", args=["B009876543"]),
+		)
+
+		self.assertEqual(respuesta.status_code, 200)
+		self.assertEqual(respuesta.data["etiqueta_sentimiento"], "positivo")
+
+	def test_catalogo_combina_busqueda_y_etiqueta(self):
+		respuesta = self.client.get(
+			reverse("videojuego-list"),
+			{"busqueda": "great", "etiqueta": "positiva"},
+		)
+
+		self.assertEqual(respuesta.status_code, 200)
+		self.assertEqual(respuesta.data["count"], 1)
+		self.assertEqual(respuesta.data["results"][0]["id"], self.videojuego.id)

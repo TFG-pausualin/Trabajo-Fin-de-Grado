@@ -9,6 +9,12 @@ import {
 import "../../styles/videojuegos.css";
 
 const VIDEOJUEGOS_POR_PAGINA = 20;
+const ETIQUETAS_CALIFICACION = ["Negativa", "Neutral", "Positiva"] as const;
+const ETIQUETAS_SENTIMIENTO = {
+  negativo: { clase: "negativa", texto: "Negativa" },
+  neutral: { clase: "neutral", texto: "Neutral" },
+  positivo: { clase: "positiva", texto: "Positiva" },
+} as const;
 
 export default function Videojuegos() {
   const navigate = useNavigate();
@@ -21,15 +27,20 @@ export default function Videojuegos() {
   const [error, setError] = useState("");
   const [busqueda, setBusqueda] = useState("");
   const [filtroAplicado, setFiltroAplicado] = useState("");
+  const [etiqueta, setEtiqueta] = useState("");
+  const [etiquetaAplicada, setEtiquetaAplicada] = useState("");
+  const [mostrarOpcionesEtiqueta, setMostrarOpcionesEtiqueta] = useState(false);
+  const [opcionEtiquetaActiva, setOpcionEtiquetaActiva] = useState(-1);
 
   useEffect(() => {
     const temporizador = window.setTimeout(() => {
       setPagina(1);
       setFiltroAplicado(busqueda.trim());
+      setEtiquetaAplicada(etiqueta.trim());
     }, 300);
 
     return () => window.clearTimeout(temporizador);
-  }, [busqueda]);
+  }, [busqueda, etiqueta]);
 
   useEffect(() => {
     let activa = true;
@@ -43,6 +54,7 @@ export default function Videojuegos() {
           pagina,
           VIDEOJUEGOS_POR_PAGINA,
           filtroAplicado,
+          etiquetaAplicada,
         );
 
         if (!activa) return;
@@ -65,7 +77,7 @@ export default function Videojuegos() {
     return () => {
       activa = false;
     };
-  }, [pagina, filtroAplicado]);
+  }, [pagina, filtroAplicado, etiquetaAplicada]);
 
   function seleccionarVideojuego(videojuego: Videojuego) {
     navigate(`/videojuegos/${videojuego.id}/reseñas`, {
@@ -78,13 +90,13 @@ export default function Videojuegos() {
   return (
     <main className="pagina-videojuegos">
       <section className="contenido-videojuegos">
-        <button
+{/*         <button
           type="button"
           className="boton-volver-videojuegos"
           onClick={() => navigate("/")}
         >
           ← Volver al inicio
-        </button>
+        </button> */}
 
         <header className="cabecera-videojuegos">
           <h1>Elige un videojuego</h1>
@@ -92,17 +104,106 @@ export default function Videojuegos() {
           <p>
             Selecciona un videojuego para consultar sus reseñas.
           </p>
-
-          <div className="buscador-videojuegos">
-            <label htmlFor="busqueda-videojuego">Buscar por título</label>
-            <input
-              id="busqueda-videojuego"
-              type="search"
-              value={busqueda}
-              onChange={(evento) => setBusqueda(evento.target.value)}
-              placeholder="Título, categoría o etiqueta"
-            />
+          <div className="filtros-videojuegos">
+            <div className="campo-filtro-videojuegos">
+              <label htmlFor="busqueda-videojuego">Buscar por título o categoría</label>
+              <input
+                id="busqueda-videojuego"
+                type="search"
+                value={busqueda}
+                onChange={(evento) => setBusqueda(evento.target.value)}
+                placeholder="Título o categoría"
+              />
+            </div>
+            <div className="campo-filtro-videojuegos">
+              <label htmlFor="etiqueta-videojuego">Filtrar por etiqueta</label>
+              <div className="control-etiqueta-videojuego">
+                <input
+                  id="etiqueta-videojuego"
+                  type="search"
+                  value={etiqueta}
+                  role="combobox"
+                  aria-autocomplete="list"
+                  aria-expanded={mostrarOpcionesEtiqueta}
+                  aria-controls="opciones-etiqueta-videojuego"
+                  aria-activedescendant={
+                    opcionEtiquetaActiva >= 0
+                      ? `opcion-etiqueta-${opcionEtiquetaActiva}`
+                      : undefined
+                  }
+                  onFocus={() => setMostrarOpcionesEtiqueta(true)}
+                  onBlur={() => setMostrarOpcionesEtiqueta(false)}
+                  onChange={(evento) => {
+                    setEtiqueta(evento.target.value);
+                    setMostrarOpcionesEtiqueta(true);
+                    setOpcionEtiquetaActiva(-1);
+                  }}
+                  onKeyDown={(evento) => {
+                    if (evento.key === "ArrowDown") {
+                      evento.preventDefault();
+                      setMostrarOpcionesEtiqueta(true);
+                      setOpcionEtiquetaActiva((actual) =>
+                        (actual + 1) % ETIQUETAS_CALIFICACION.length,
+                      );
+                    } else if (evento.key === "ArrowUp") {
+                      evento.preventDefault();
+                      setMostrarOpcionesEtiqueta(true);
+                      setOpcionEtiquetaActiva((actual) =>
+                        actual <= 0
+                          ? ETIQUETAS_CALIFICACION.length - 1
+                          : actual - 1,
+                      );
+                    } else if (
+                      evento.key === "Enter" &&
+                      mostrarOpcionesEtiqueta &&
+                      opcionEtiquetaActiva >= 0
+                    ) {
+                      evento.preventDefault();
+                      setEtiqueta(ETIQUETAS_CALIFICACION[opcionEtiquetaActiva]);
+                      setMostrarOpcionesEtiqueta(false);
+                      setOpcionEtiquetaActiva(-1);
+                    } else if (evento.key === "Escape") {
+                      setMostrarOpcionesEtiqueta(false);
+                      setOpcionEtiquetaActiva(-1);
+                    }
+                  }}
+                  placeholder="Escribe o elige una etiqueta"
+                />
+                {mostrarOpcionesEtiqueta && (
+                  <div
+                    className="opciones-etiqueta-videojuego"
+                    id="opciones-etiqueta-videojuego"
+                    role="listbox"
+                    aria-label="Etiquetas de calificación"
+                  >
+                    {ETIQUETAS_CALIFICACION.map((opcion, indice) => (
+                      <button
+                        key={opcion}
+                        id={`opcion-etiqueta-${indice}`}
+                        type="button"
+                        role="option"
+                        aria-selected={etiqueta === opcion}
+                        className={
+                          indice === opcionEtiquetaActiva
+                            ? "opcion-etiqueta-videojuego opcion-etiqueta-activa"
+                            : "opcion-etiqueta-videojuego"
+                        }
+                        onMouseDown={(evento) => evento.preventDefault()}
+                        onClick={() => {
+                          setEtiqueta(opcion);
+                          setMostrarOpcionesEtiqueta(false);
+                          setOpcionEtiquetaActiva(-1);
+                        }}
+                      >
+                        {opcion}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
+
         </header>
 
         {cargando && (
@@ -128,6 +229,15 @@ export default function Videojuegos() {
                   seleccionarVideojuego(videojuego)
                 }
               >
+                {videojuego.etiqueta_sentimiento && (
+                  <span
+                    className={`etiqueta-calificacion-videojuego etiqueta-${ETIQUETAS_SENTIMIENTO[videojuego.etiqueta_sentimiento].clase}`}
+                    aria-label={`Sentimiento predominante: ${ETIQUETAS_SENTIMIENTO[videojuego.etiqueta_sentimiento].texto}`}
+                  >
+                    {ETIQUETAS_SENTIMIENTO[videojuego.etiqueta_sentimiento].texto}
+                  </span>
+                )}
+
                 <span
                   className="icono-videojuego"
                   aria-hidden="true"
@@ -146,13 +256,8 @@ export default function Videojuegos() {
                         ? "Sin media"
                         : `${videojuego.puntuacion_media.toFixed(1)} / 5`}
                     </span>
-                    {videojuego.puntuacion_media !== null && (
-                      <span className="etiqueta-calificacion-videojuego">
-                        {obtenerEtiquetaCalificacion(videojuego.puntuacion_media)}
-                      </span>
-                    )}
                     <span className="conteo-destacado-videojuego">
-                      {videojuego.numero_valoraciones.toLocaleString("es-ES")} valoraciones
+                      {videojuego.numero_resenas.toLocaleString("es-ES")} reseñas
                     </span>
                   </span>
 
@@ -183,7 +288,7 @@ export default function Videojuegos() {
 
         {!cargando && !error && videojuegos.length === 0 && (
           <p className="sin-resultados">
-            No se encontraron videojuegos{filtroAplicado ? ` para "${filtroAplicado}"` : ""}.
+            No se encontraron videojuegos con esos filtros.
           </p>
         )}
 
@@ -222,10 +327,4 @@ export default function Videojuegos() {
       </section>
     </main>
   );
-}
-
-function obtenerEtiquetaCalificacion(puntuacion: number): string {
-  if (puntuacion < 2.5) return "Negativa";
-  if (puntuacion < 3.5) return "Neutral";
-  return "Positiva";
 }

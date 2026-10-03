@@ -228,7 +228,7 @@ class Command(BaseCommand):
         for archivo in archivos_resenas:
             parte = pd.read_parquet(
                 archivo,
-                columns=["parent_asin", "rating"],
+                columns=["parent_asin", "rating", "sentiment"],
             )
             partes.append(parte)
 
@@ -240,16 +240,33 @@ class Command(BaseCommand):
             resenas["rating"],
             errors="coerce",
         )
-        resenas = resenas.dropna(
-            subset=["parent_asin", "rating"]
+        resenas["sentiment"] = (
+            resenas["sentiment"]
+            .astype("string")
+            .str.strip()
+            .str.casefold()
+            .fillna("")
         )
+        resenas = resenas.dropna(subset=["parent_asin"])
         resenas = resenas[resenas["parent_asin"] != ""]
+        for sentimiento, plural in (
+            ("positivo", "positivos"),
+            ("neutral", "neutrales"),
+            ("negativo", "negativos"),
+        ):
+            resenas[f"sentimientos_{plural}"] = (
+                resenas["sentiment"] == sentimiento
+            ).astype("int64")
 
         estadisticas = (
             resenas.groupby("parent_asin", as_index=False)
             .agg(
                 puntuacion_media=("rating", "mean"),
-                numero_valoraciones=("rating", "size"),
+                numero_valoraciones=("rating", "count"),
+                numero_resenas=("parent_asin", "size"),
+                sentimientos_positivos=("sentimientos_positivos", "sum"),
+                sentimientos_neutrales=("sentimientos_neutrales", "sum"),
+                sentimientos_negativos=("sentimientos_negativos", "sum"),
             )
         )
         return estadisticas
@@ -284,7 +301,7 @@ class Command(BaseCommand):
         )
 
         total_resenas = int(
-            catalogo["numero_valoraciones"].sum()
+            catalogo["numero_resenas"].sum()
         )
 
         self.stdout.write(
@@ -334,6 +351,10 @@ class Command(BaseCommand):
                 numero_valoraciones=int(
                     fila.numero_valoraciones
                 ),
+                numero_resenas=int(fila.numero_resenas),
+                sentimientos_positivos=int(fila.sentimientos_positivos),
+                sentimientos_neutrales=int(fila.sentimientos_neutrales),
+                sentimientos_negativos=int(fila.sentimientos_negativos),
                 categoria_principal=(
                     None
                     if pd.isna(fila.main_category)
@@ -380,6 +401,10 @@ class Command(BaseCommand):
                     "titulo",
                     "puntuacion_media",
                     "numero_valoraciones",
+                    "numero_resenas",
+                    "sentimientos_positivos",
+                    "sentimientos_neutrales",
+                    "sentimientos_negativos",
                     "categoria_principal",
                     "tienda",
                     "detalles",

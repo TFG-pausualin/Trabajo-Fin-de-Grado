@@ -35,6 +35,15 @@ class Videojuego(models.Model):
         ),
     )
 
+    numero_resenas = models.PositiveIntegerField(
+        default=0,
+        help_text="Número total de reseñas asociadas al videojuego.",
+    )
+
+    sentimientos_positivos = models.PositiveIntegerField(default=0)
+    sentimientos_neutrales = models.PositiveIntegerField(default=0)
+    sentimientos_negativos = models.PositiveIntegerField(default=0)
+
     categoria_principal = models.CharField(
         max_length=200,
         null=True,
