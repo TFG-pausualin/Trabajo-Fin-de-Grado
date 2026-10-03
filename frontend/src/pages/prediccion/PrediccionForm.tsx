@@ -34,13 +34,13 @@ export default function Prediccion() {
 
   const solicitudResena: SolicitudPrediccion | null = videojuegoId
     ? {
-        videojuego_id: videojuegoId,
-        title: tituloResena.trim(),
-        text: textoResena.trim(),
-        rating: puntuacion ? Number(puntuacion) : null,
-        verified_purchase: compraVerificada,
-        images: imagenes,
-      }
+      videojuego_id: videojuegoId,
+      title: tituloResena.trim(),
+      text: textoResena.trim(),
+      rating: puntuacion ? Number(puntuacion) : null,
+      verified_purchase: compraVerificada,
+      images: imagenes,
+    }
     : null;
 
   useEffect(() => {
@@ -277,11 +277,10 @@ export default function Prediccion() {
                     <span>{imagen}</span>
                     <button
                       type="button"
-                      onClick={() =>
-                        {
-                          setImagenes((actuales) => actuales.filter((_, i) => i !== indice));
-                          invalidarAnalisis();
-                        }
+                      onClick={() => {
+                        setImagenes((actuales) => actuales.filter((_, i) => i !== indice));
+                        invalidarAnalisis();
+                      }
                       }
                       aria-label={`Quitar imagen ${indice + 1}`}
                     >
@@ -343,6 +342,16 @@ export default function Prediccion() {
                 Reseña guardada. Volverás a las reseñas en 10 segundos.
               </p>
             )}
+
+            <button
+              type="button"
+              className="boton-volver-analisis"
+              onClick={() =>
+                navigate(videojuegoId ? `/videojuegos/${videojuegoId}/reseñas` : "/videojuegos")
+              }
+            >
+              Volver al videojuego
+            </button>
           </section>
         )}
       </section>

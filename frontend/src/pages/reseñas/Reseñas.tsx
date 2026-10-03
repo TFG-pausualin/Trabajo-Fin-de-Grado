@@ -187,9 +187,19 @@ export default function Reseñas() {
     <main className="pagina-reseñas">
       <section className="contenido-reseñas">
         <header className="cabecera-reseñas">
-          <span className="etiqueta-videojuego">
+          {/* <span className="etiqueta-videojuego">
             Videojuego seleccionado
-          </span>
+          </span> */}
+                  
+        <button
+          type="button"
+          className="boton-volver"
+          onClick={() =>
+            navigate(videojuegoId ? `/videojuegos/` : "/videojuegos")
+          }
+        >
+          Volver a la lista de videojuegos
+        </button>
 
           <h1>{nombreVideojuego}</h1>
 
