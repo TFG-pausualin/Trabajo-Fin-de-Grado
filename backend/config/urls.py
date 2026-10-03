@@ -59,4 +59,9 @@ urlpatterns = [
         ),
         name="redoc",
     ),
+    
+    path(
+    "api/metricas/",
+    include("metricas.urls"),
+),
 ]
