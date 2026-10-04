@@ -85,8 +85,9 @@ class VideojuegoViewSet(viewsets.ReadOnlyModelViewSet):
             ),
         ).annotate(
             etiqueta_sentimiento=models.Case(
+                # Mayoría positiva: supera tanto a neutral como a negativo.
                 models.When(
-                    Q( # En caso de empate entre positivo y neutral, se resuelve con la puntuación media
+                    Q(
                         _sentimientos_positivos_actuales__gt=models.F(
                             "_sentimientos_neutrales_actuales"
                         )
@@ -98,7 +99,8 @@ class VideojuegoViewSet(viewsets.ReadOnlyModelViewSet):
                     ),
                     then=models.Value("positivo"),
                 ),
-                models.When( #En caso de empate entre positivo y neutral, se resuelve con la puntuación media
+                # Mayoría neutral: supera tanto a positivo como a negativo.
+                models.When(
                     Q(
                         _sentimientos_neutrales_actuales__gt=models.F(
                             "_sentimientos_positivos_actuales"
@@ -111,7 +113,8 @@ class VideojuegoViewSet(viewsets.ReadOnlyModelViewSet):
                     ),
                     then=models.Value("neutral"),
                 ),
-                models.When( #En caso de empate entre positivo y negativo, se resuelve con la puntuación media
+                # Mayoría negativa: supera tanto a positivo como a neutral.
+                models.When(
                     Q(
                         _sentimientos_negativos_actuales__gt=models.F(
                             "_sentimientos_positivos_actuales"
@@ -124,7 +127,9 @@ class VideojuegoViewSet(viewsets.ReadOnlyModelViewSet):
                     ),
                     then=models.Value("negativo"),
                 ),
-                default=models.F("_etiqueta_puntuacion"), #en caso de empate, se utiliza la etiqueta basada en la puntuación media
+                # Si hay empate en el máximo (positivo-neutral, positivo-negativo,
+                # neutral-negativo o triple empate), desempata la puntuación media.
+                default=models.F("_etiqueta_puntuacion"),
                 output_field=models.CharField(null=True),
             ),
         )
