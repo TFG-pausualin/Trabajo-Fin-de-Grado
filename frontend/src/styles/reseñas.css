@@ -174,6 +174,33 @@
   font-size: 1.8rem;
 }
 
+.filtro-opinion-reseñas {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.filtro-opinion-reseñas select {
+  min-width: 10rem;
+  padding: 0.85rem 1.5rem;
+  border: none;
+  border-radius: 999px;
+  background-color: #f8dda1;
+  color: #252525;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.filtro-opinion-reseñas select:hover {
+  box-shadow: 0 10px 22px rgb(0 0 0 / 15%);
+  transform: translateY(-2px);
+}
+
 .boton-nueva-resena {
   padding: 0.85rem 1.5rem;
 
@@ -399,6 +426,14 @@
 
   .acciones-reseñas h2 {
     text-align: center;
+  }
+
+  .filtro-opinion-reseñas {
+    justify-content: space-between;
+  }
+
+  .filtro-opinion-reseñas select {
+    flex: 1;
   }
 
   .boton-nueva-resena {

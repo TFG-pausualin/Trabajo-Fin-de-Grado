@@ -6,11 +6,18 @@ import {
   obtenerReseñas,
   type DetalleVideojuego,
   type Resena,
+  type SentimientoResena,
 } from "../../services/videojuegosService";
 
 import "../../styles/reseñas.css";
 
 const RESEÑAS_POR_PAGINA = 20;
+const TIPOS_OPINION = [
+  { valor: "", etiqueta: "Todas las opiniones" },
+  { valor: "positivo", etiqueta: "Positivas" },
+  { valor: "neutral", etiqueta: "Neutrales" },
+  { valor: "negativo", etiqueta: "Negativas" },
+] as const;
 
 function obtenerImagenes(valor: unknown): Record<string, unknown>[] {
   if (!Array.isArray(valor)) return [];
@@ -104,6 +111,7 @@ export default function Reseñas() {
   const [totalPaginas, setTotalPaginas] = useState(0);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState("");
+  const [tipoOpinion, setTipoOpinion] = useState<SentimientoResena | "">("");
 
   const nombreVideojuego = videojuego?.titulo ?? titulo ?? videojuegoId ?? "Videojuego";
 
@@ -147,6 +155,7 @@ export default function Reseñas() {
           videojuegoId,
           pagina,
           RESEÑAS_POR_PAGINA,
+          tipoOpinion,
         );
 
         if (!activa) return;
@@ -165,7 +174,7 @@ export default function Reseñas() {
     return () => {
       activa = false;
     };
-  }, [videojuegoId, pagina]);
+  }, [videojuegoId, pagina, tipoOpinion]);
 
   const escribirResena = () => {
     if (!videojuegoId) return;
@@ -291,6 +300,31 @@ export default function Reseñas() {
         <div className="acciones-reseñas">
           <h2>Reseñas etiquetadas ({total.toLocaleString("es-ES")})</h2>
 
+          <label className="filtro-opinion-reseñas" htmlFor="filtro-opinion-reseñas">
+            <select
+              id="filtro-opinion-reseñas"
+              value={tipoOpinion}
+              onChange={(evento) => {
+                const valor = evento.target.value;
+                if (
+                  valor === "" ||
+                  valor === "positivo" ||
+                  valor === "neutral" ||
+                  valor === "negativo"
+                ) {
+                  setTipoOpinion(valor);
+                  setPagina(1);
+                }
+              }}
+            >
+              {TIPOS_OPINION.map((opcion) => (
+                <option key={opcion.valor} value={opcion.valor}>
+                  {opcion.etiqueta}
+                </option>
+              ))}
+            </select>
+          </label>
+
           <button
             type="button"
             className="boton-nueva-resena"
@@ -378,8 +412,14 @@ export default function Reseñas() {
 
         {!cargando && !error && reseñas.length === 0 && (
           <div className="sin-reseñas">
-            <h2>Todavía no hay reseñas</h2>
-            <p>No hay reseñas etiquetadas disponibles para {nombreVideojuego}.</p>
+            <h2>
+              {tipoOpinion ? "No hay reseñas de este tipo" : "Todavía no hay reseñas"}
+            </h2>
+            <p>
+              {tipoOpinion
+                ? `No hay opiniones ${tipoOpinion} disponibles para ${nombreVideojuego}.`
+                : `No hay reseñas etiquetadas disponibles para ${nombreVideojuego}.`}
+            </p>
           </div>
         )}
 

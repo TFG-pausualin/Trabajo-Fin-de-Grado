@@ -23,6 +23,8 @@ export interface RespuestaVideojuegos {
   total_paginas: number;
 }
 
+export type SentimientoResena = "positivo" | "neutral" | "negativo";
+
 export interface Resena {
   id: string;
   rating: number | null;
@@ -35,7 +37,7 @@ export interface Resena {
   timestamp: string | null;
   helpful_vote: number | null;
   verified_purchase: boolean | null;
-  sentimiento: "positivo" | "neutral" | "negativo" | null;
+  sentimiento: SentimientoResena | null;
 }
 
 export interface RespuestaReseñas {
@@ -104,6 +106,7 @@ export async function obtenerReseñas(
   videojuegoId: string,
   pagina = 1,
   limite = 20,
+  sentimiento: SentimientoResena | "" = "",
 ): Promise<RespuestaReseñas> {
   const parametros = new URLSearchParams({
     videojuego: videojuegoId,
@@ -111,6 +114,7 @@ export async function obtenerReseñas(
     pagina: String(pagina),
     limite: String(limite),
   });
+  if (sentimiento) parametros.set("sentimiento", sentimiento);
   const datos = await solicitarApi<RespuestaPaginadaApi<ResenaApi>>(
     `resenas/?${parametros}`,
   );

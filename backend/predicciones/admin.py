@@ -1,4 +1,4 @@
-from django.contrib import admin
+""" from django.contrib import admin
 
 from .models import Prediccion
 
@@ -45,4 +45,4 @@ class PrediccionAdmin(admin.ModelAdmin):
         "-created_at",
     )
 
-    list_per_page = 50
+    list_per_page = 50 """
