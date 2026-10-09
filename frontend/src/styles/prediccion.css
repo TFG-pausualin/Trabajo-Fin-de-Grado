@@ -1,0 +1,383 @@
+.prediccion {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 2rem;
+  background-color: #35c88a;
+  color: #252525;
+}
+
+.prediccion-contenido {
+  width: min(720px, 100%);
+  margin: 0 auto;
+}
+
+/* Botón para volver a la portada */
+
+.boton-volver {
+  margin-bottom: 1.5rem;
+  padding: 0.7rem 1.3rem;
+
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+
+  background-color: transparent;
+  color: #ffffff;
+
+  font: inherit;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.boton-volver:hover {
+  background-color: #ffffff;
+  color: #252525;
+  transform: translateY(-2px);
+}
+
+/* Botón para volver al videojuego */
+
+.boton-volver-analisis {
+  margin-bottom: 1.5rem;
+  padding: 0.7rem 1.3rem;
+
+  border: 2px solid #16794f;
+  border-radius: 999px;
+
+  background-color: transparent;
+  color: #16794f;
+
+  font: inherit;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.boton-volver-analisis:hover {
+  background-color: #16794f;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* Título y descripción */
+
+.prediccion-cabecera {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.prediccion-cabecera h1 {
+  margin-bottom: 0.75rem;
+  color: #f8dda1;
+  font-size: 4rem;
+  line-height: 1.1;
+}
+
+.prediccion-cabecera p {
+  color: #ffffff;
+  font-size: 1.15rem;
+  line-height: 1.6;
+}
+
+/* Formulario */
+
+.formulario-prediccion {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  padding: 2rem;
+
+  border-radius: 1.5rem;
+  background-color: #ffffff;
+
+  box-shadow: 0 18px 45px rgb(0 0 0 / 15%);
+}
+
+.campo-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.campo-formulario label {
+  color: #252525;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.campo-opcional {
+  color: #777777;
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+.videojuego-seleccionado-formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem;
+  border-left: 4px solid #16794f;
+  background-color: #f0f7f3;
+}
+
+.videojuego-seleccionado-formulario span {
+  color: #53615a;
+  font-size: 0.9rem;
+}
+
+.videojuego-seleccionado-formulario strong {
+  font-size: 1.1rem;
+  overflow-wrap: anywhere;
+}
+
+/* Inputs, textarea y select */
+
+.campo-formulario input,
+.campo-formulario textarea,
+.campo-formulario select {
+  width: 100%;
+  padding: 0.9rem 1rem;
+
+  border: 2px solid #dedede;
+  border-radius: 0.75rem;
+
+  background-color: #ffffff;
+  color: #252525;
+
+  font: inherit;
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.campo-formulario textarea {
+  min-height: 160px;
+  resize: vertical;
+}
+
+.campo-formulario input::placeholder,
+.campo-formulario textarea::placeholder {
+  color: #999999;
+}
+
+.campo-formulario input:focus,
+.campo-formulario textarea:focus,
+.campo-formulario select:focus {
+  border-color: hsl(155, 58%, 50%);
+  box-shadow: 0 0 0 4px rgb(53 200 138 / 18%);
+}
+
+.entrada-imagenes-formulario {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+}
+
+.entrada-imagenes-formulario button,
+.lista-imagenes-formulario button {
+  flex: 0 0 auto;
+  padding: 0.75rem 1rem;
+  border: 1px solid #16794f;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  color: #16794f;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.lista-imagenes-formulario {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lista-imagenes-formulario li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0.6rem;
+  border: 1px solid #e2e9e4;
+  border-radius: 0.5rem;
+}
+
+.lista-imagenes-formulario img {
+  flex: 0 0 auto;
+  width: 52px;
+  height: 52px;
+  object-fit: cover;
+}
+
+.lista-imagenes-formulario span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: #53615a;
+  font-size: 0.85rem;
+}
+
+.opcion-compra-verificada {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-weight: 650;
+}
+
+.opcion-compra-verificada input {
+  width: 1.1rem;
+  height: 1.1rem;
+  margin: 0;
+  accent-color: #16794f;
+}
+
+/* Botón principal */
+
+.boton-analizar {
+  align-self: center;
+
+  margin-top: 0.5rem;
+  padding: 1rem 2.5rem;
+
+  border: none;
+  border-radius: 999px;
+
+  background-color: #35c88a;
+  color: #ffffff;
+
+  font: inherit;
+  font-size: 1.05rem;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.boton-analizar:hover {
+  background-color: #29ae76;
+  box-shadow: 0 10px 22px rgb(53 200 138 / 30%);
+  transform: translateY(-2px);
+}
+
+.boton-analizar:disabled {
+  background-color: #9ab9aa;
+  box-shadow: none;
+  cursor: wait;
+  transform: none;
+}
+
+.resultado-prediccion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  background-color: #ffffff;
+  box-shadow: 0 18px 45px rgb(0 0 0 / 15%);
+}
+
+.resultado-prediccion > .boton-analizar,
+.resultado-prediccion > .boton-volver-analisis {
+  width: min(100%, 16rem);
+}
+
+.resultado-prediccion > .boton-volver-analisis {
+  align-self: center;
+}
+
+.resultado-etiqueta {
+  color: #53615a;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.sentimiento {
+  font-size: 2rem;
+  text-transform: capitalize;
+}
+
+.sentimiento-positivo {
+  color: #16794f;
+}
+
+.sentimiento-neutral {
+  color: #a06b00;
+}
+
+.sentimiento-negativo,
+.resultado-error {
+  color: #b42318;
+}
+
+.resultado-prediccion p {
+  margin: 0;
+  color: #53615a;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.boton-analizar:active,
+.boton-volver:active,
+.boton-volver-analisis:active {
+  transform: translateY(0);
+}
+
+/* Accesibilidad mediante teclado */
+
+.boton-analizar:focus-visible,
+.boton-volver:focus-visible,
+.boton-volver-analisis:focus-visible {
+  outline: 3px solid #252525;
+  outline-offset: 4px;
+}
+
+/* Diseño adaptable para móviles */
+
+@media (max-width: 600px) {
+  .prediccion {
+    padding: 1.25rem;
+  }
+
+  .formulario-prediccion {
+    padding: 1.25rem;
+    border-radius: 1rem;
+  }
+
+  .prediccion-cabecera h1 {
+    font-size: 2.25rem;
+  }
+
+  .boton-analizar {
+    width: 100%;
+  }
+
+  .entrada-imagenes-formulario {
+    flex-direction: column;
+  }
+
+  .lista-imagenes-formulario li {
+    flex-wrap: wrap;
+  }
+
+  .lista-imagenes-formulario button {
+    margin-left: auto;
+  }
+}

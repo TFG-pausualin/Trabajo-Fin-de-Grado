@@ -1,0 +1,81 @@
+.inicio {
+  min-height: calc(100vh - 4rem);
+  min-height: calc(100dvh - 4rem);
+  background-color: #35c88a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero {
+  width: 100%;
+  max-width: 1200px;
+  padding: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.hero h1 {
+  margin-bottom: 1rem;
+  color: #f8dda1;
+  font-size: 4rem;
+  line-height: 1.1;
+}
+
+.hero p {
+  margin-bottom: 2rem;
+  color: #ffffff;
+  font-size: 1.5rem;
+}
+
+.hero-imagen {
+  display: block;
+  width: min(500px, 90%);
+  height: auto;
+}
+
+.hero-boton {
+  margin-top: 2rem;
+  padding: 1rem 3rem;
+  border: none;
+  border-radius: 999px;
+  background-color: #ffffff;
+  color: #222222;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.hero-boton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgb(0 0 0 / 18%);
+}
+
+.hero-boton:focus-visible {
+  outline: 3px solid #222222;
+  outline-offset: 4px;
+}
+
+@media (max-width: 600px) {
+  .hero {
+    padding: 1.25rem;
+  }
+
+  .hero h1 {
+    font-size: 2.25rem;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+  }
+
+  .hero-boton {
+    padding: 0.9rem 1.5rem;
+    font-size: 1rem;
+  }
+}

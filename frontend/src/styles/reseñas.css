@@ -1,0 +1,467 @@
+.pagina-reseñas {
+  min-height: 100vh;
+  padding: 2rem;
+  background-color: #35c88a;
+  color: #252525;
+}
+
+.contenido-reseñas {
+  width: min(900px, 100%);
+  margin: 0 auto;
+}
+
+.boton-volver-reseñas {
+  margin-bottom: 1.5rem;
+  padding: 0.7rem 1.3rem;
+
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+
+  background-color: transparent;
+  color: #ffffff;
+
+  font-weight: 600;
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.boton-volver-reseñas:hover {
+  background-color: #ffffff;
+  color: #252525;
+  transform: translateY(-2px);
+}
+
+.cabecera-reseñas {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.etiqueta-videojuego {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  padding: 0.4rem 1rem;
+
+  border-radius: 999px;
+
+  background-color: rgb(255 255 255 / 20%);
+  color: #ffffff;
+
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.cabecera-reseñas h1 {
+  margin-bottom: 0.75rem;
+  color: #f8dda1;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  line-height: 1.1;
+}
+
+.cabecera-reseñas p {
+  color: #ffffff;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.detalle-videojuego {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.8fr) minmax(0, 1.3fr);
+  align-items: start;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+}
+
+.columna-visual-videojuego,
+.columna-metadatos-videojuego {
+  min-width: 0;
+}
+
+.columna-visual-videojuego {
+  display: grid;
+  gap: 1rem;
+}
+
+.resumen-detalle-videojuego {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.imagen-detalle-videojuego {
+  flex: 0 0 auto;
+  width: 150px;
+  height: 190px;
+  object-fit: contain;
+}
+
+.metricas-detalle-videojuego {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: #16794f;
+  font-size: 1.4rem;
+  font-weight: 750;
+}
+
+.galeria-imagenes-videojuego {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.galeria-imagenes-videojuego img {
+  flex: 0 0 auto;
+  width: 92px;
+  height: 112px;
+  object-fit: contain;
+}
+
+.campos-detalle-videojuego {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 1.25rem;
+  margin: 0;
+}
+
+.campo-detalle-videojuego {
+  min-width: 0;
+  padding: 0.9rem 0;
+  border-top: 1px solid #e5ebe7;
+}
+
+.campo-detalle-videojuego dt {
+  margin-bottom: 0.35rem;
+  color: #16794f;
+  font-size: 0.85rem;
+  font-weight: 750;
+  text-transform: capitalize;
+}
+
+.campo-detalle-videojuego dd {
+  margin: 0;
+  color: #3e4742;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.campo-detalle-description,
+.campo-detalle-features,
+.campo-detalle-details {
+  grid-column: 1 / -1;
+}
+
+.acciones-reseñas {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  margin-bottom: 1.5rem;
+}
+
+.acciones-reseñas h2 {
+  color: #ffffff;
+  font-size: 1.8rem;
+}
+
+.filtro-opinion-reseñas {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.filtro-opinion-reseñas select {
+  min-width: 10rem;
+  padding: 0.85rem 1.5rem;
+  border: none;
+  border-radius: 999px;
+  background-color: #f8dda1;
+  color: #252525;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.filtro-opinion-reseñas select:hover {
+  box-shadow: 0 10px 22px rgb(0 0 0 / 15%);
+  transform: translateY(-2px);
+}
+
+.boton-nueva-resena {
+  padding: 0.85rem 1.5rem;
+
+  border: none;
+  border-radius: 999px;
+
+  background-color: #f8dda1;
+  color: #252525;
+
+  font-weight: 700;
+  cursor: pointer;
+
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.boton-nueva-resena:hover {
+  box-shadow: 0 10px 22px rgb(0 0 0 / 15%);
+  transform: translateY(-2px);
+}
+
+.lista-reseñas {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tarjeta-resena {
+  padding: 1.5rem;
+
+  border: 2px solid transparent;
+  border-radius: 1rem;
+
+  background-color: #ffffff;
+  box-shadow: 0 10px 25px rgb(0 0 0 / 12%);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.tarjeta-resena:hover {
+  border-color: #f8dda1;
+  box-shadow: 0 16px 30px rgb(0 0 0 / 16%);
+  transform: translateY(-2px);
+}
+
+.cabecera-tarjeta-resena {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  margin-bottom: 1rem;
+}
+
+.datos-cabecera-resena {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #666666;
+  font-size: 0.9rem;
+}
+
+.sentimiento {
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.sentimiento-positivo {
+  background-color: #dff8eb;
+  color: #16794f;
+}
+
+.sentimiento-neutral {
+  background-color: #fff4cf;
+  color: #806000;
+}
+
+.sentimiento-negativo {
+  background-color: #ffe0e0;
+  color: #a52a2a;
+}
+
+.puntuacion-resena {
+  color: #f0b429;
+  font-size: 1.15rem;
+  letter-spacing: 0.1rem;
+}
+
+.estrellas-vacias {
+  color: #dddddd;
+}
+
+.texto-resena {
+  color: #444444;
+  font-size: 1rem;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.titulo-resena {
+  margin-bottom: 0.6rem;
+  color: #252525;
+  font-size: 1.15rem;
+}
+
+.imagenes-resena {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.imagenes-resena img {
+  width: 112px;
+  height: 112px;
+  border-radius: 0.35rem;
+  object-fit: cover;
+}
+
+.metadatos-resena {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.25rem;
+  margin: 1rem 0 0;
+  padding-top: 0.8rem;
+  border-top: 1px solid #e5ebe7;
+  color: #606b65;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.metadatos-resena div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.metadatos-resena dt {
+  font-weight: 700;
+}
+
+.metadatos-resena dd {
+  margin: 0.15rem 0 0;
+}
+
+.sin-reseñas {
+  padding: 3rem 2rem;
+
+  border-radius: 1.25rem;
+
+  background-color: #ffffff;
+  text-align: center;
+
+  box-shadow: 0 10px 25px rgb(0 0 0 / 12%);
+}
+
+.sin-reseñas h2 {
+  margin-bottom: 0.75rem;
+}
+
+.sin-reseñas p {
+  margin-bottom: 1.5rem;
+  color: #666666;
+  line-height: 1.6;
+}
+
+.mensaje-reseñas {
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  text-align: center;
+}
+
+.mensaje-error-reseñas {
+  color: #a52a2a;
+}
+
+.paginacion-reseñas {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  color: #ffffff;
+}
+
+.control-paginacion-reseñas {
+  padding: 0.65rem 1rem;
+  border: 1px solid #ffffff;
+  border-radius: 0.4rem;
+  background: #ffffff;
+  color: #252525;
+  font: inherit;
+  cursor: pointer;
+}
+
+.control-paginacion-reseñas:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .detalle-videojuego {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pagina-reseñas {
+    padding: 1.25rem;
+  }
+
+  .acciones-reseñas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .acciones-reseñas h2 {
+    text-align: center;
+  }
+
+  .filtro-opinion-reseñas {
+    justify-content: space-between;
+  }
+
+  .filtro-opinion-reseñas select {
+    flex: 1;
+  }
+
+  .boton-nueva-resena {
+    width: 100%;
+  }
+
+  .cabecera-tarjeta-resena {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .resumen-detalle-videojuego {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .campos-detalle-videojuego {
+    grid-template-columns: 1fr;
+  }
+
+  .campo-detalle-description,
+  .campo-detalle-features,
+  .campo-detalle-details {
+    grid-column: auto;
+  }
+
+  .paginacion-reseñas {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
