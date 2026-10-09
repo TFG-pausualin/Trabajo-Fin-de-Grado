@@ -23,7 +23,6 @@ load_dotenv(BASE_DIR.parent / ".env")
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-mbzf4d+#9g#kckv1o+y@c5jsp#vbvp%lk*b2c#m6!(2bbd-j1x'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -90,32 +89,40 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
+USE_SQLITE = os.getenv(
+    "USE_SQLITE",
+    "False",
+).lower() == "true"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv(
-            "POSTGRES_DB",
-            "tfg_videojuegos",
-        ),
-        "USER": os.getenv(
-            "POSTGRES_USER",
-            "postgres",
-        ),
-        "PASSWORD": os.getenv(
-            "POSTGRES_PASSWORD",
-            "postgres",
-        ),
-        "HOST": os.getenv(
-            "POSTGRES_HOST",
-            "localhost",
-        ),
-        "PORT": os.getenv(
-            "POSTGRES_PORT",
-            "5432",
-        ),
+
+if USE_SQLITE:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": (
+                "django.db.backends.postgresql"
+            ),
+            "NAME": os.getenv("POSTGRES_DB"),
+            "USER": os.getenv("POSTGRES_USER"),
+            "PASSWORD": os.getenv(
+                "POSTGRES_PASSWORD"
+            ),
+            "HOST": os.getenv(
+                "POSTGRES_HOST",
+                "localhost",
+            ),
+            "PORT": os.getenv(
+                "POSTGRES_PORT",
+                "5432",
+            ),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
