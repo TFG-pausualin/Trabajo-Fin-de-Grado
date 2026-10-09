@@ -8,7 +8,7 @@ Trabajo Fin de Grado sobre la percepción de los consumidores de videojuegos med
 - Consulta y filtrado de reseñas de un videojuego por tipo de opinión.
 - Envío de nuevas reseñas y clasificación de su sentimiento.
 - Panel de estadísticas globales y por videojuego.
-- API REST documentada con Swagger y ReDoc.
+- API REST documentada con Swagger.
 - Notebooks para explorar y procesar los datos y entrenar/evaluar modelos.
 
 ## Tecnologías
