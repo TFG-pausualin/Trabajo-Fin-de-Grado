@@ -24,3 +24,4 @@ data/reseñas_generadas.sqlite3
 !.env.example
 postgres_error.log
 backend/db.sqlite3
+backend/staticfiles/
