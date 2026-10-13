@@ -278,6 +278,22 @@ SECURE_PROXY_SSL_HEADER = (
     "https",
 )
 
+RESENAS_PARQUET_DIR = Path(
+    os.getenv(
+        "RESENAS_PARQUET_DIR",
+        str(
+            BASE_DIR.parent
+            / "data"
+            / "procesado"
+        ),
+    )
+)
+if os.getenv("USE_DEMO_PARQUET", "False").lower() == "true":
+    RESENAS_PARQUET_DIR = (
+        BASE_DIR
+        / "data_demo"
+    )
+
 SECURE_SSL_REDIRECT = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG

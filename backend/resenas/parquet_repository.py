@@ -43,11 +43,17 @@ class RepositorioResenasParquet:
         self,
         directorio_procesado: Path | None = None,
     ) -> None:
+        directorio_configurado = getattr(
+            settings,
+            "RESENAS_PARQUET_DIR",
+            settings.BASE_DIR.parent
+            / "data"
+            / "procesado",
+        )
+
         self.directorio_procesado = (
             directorio_procesado
-            or settings.BASE_DIR.parent
-            / "data"
-            / "procesado"
+            or Path(directorio_configurado)
         )
 
         self.directorio_originales = (
@@ -59,7 +65,7 @@ class RepositorioResenasParquet:
             self.directorio_procesado
             / "resenas_etiquetadas"
         )
-
+        
     def esta_disponible(self) -> bool:
         return (
             self.directorio_originales.is_dir()
