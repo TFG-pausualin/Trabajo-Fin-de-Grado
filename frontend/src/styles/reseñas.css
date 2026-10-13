@@ -1,6 +1,6 @@
 .pagina-reseñas {
   min-height: 100vh;
-  padding: 2rem;
+  padding: clamp(1rem, 4vw, 2rem);
   background-color: #35c88a;
   color: #252525;
 }
@@ -55,10 +55,11 @@
 }
 
 .cabecera-reseñas h1 {
-  margin-bottom: 0.75rem;
+  margin: 0 0 0.75rem;
   color: #f8dda1;
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-size: clamp(1.75rem, 4vw, 3rem);
   line-height: 1.1;
+  overflow-wrap: anywhere;
 }
 
 .cabecera-reseñas p {
@@ -69,11 +70,11 @@
 
 .detalle-videojuego {
   display: grid;
-  grid-template-columns: minmax(240px, 0.8fr) minmax(0, 1.3fr);
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.3fr);
   align-items: start;
-  gap: 1rem;
+  gap: clamp(1rem, 3vw, 1.5rem);
   margin-bottom: 2rem;
-  padding: 1.25rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
   border-radius: 0.5rem;
   background-color: #ffffff;
 }
@@ -97,8 +98,9 @@
 
 .imagen-detalle-videojuego {
   flex: 0 0 auto;
-  width: 150px;
-  height: 190px;
+  width: min(150px, 100%);
+  height: auto;
+  max-height: 190px;
   object-fit: contain;
 }
 
@@ -107,8 +109,9 @@
   flex-direction: column;
   gap: 0.5rem;
   color: #16794f;
-  font-size: 1.4rem;
+  font-size: clamp(1rem, 2.5vw, 1.4rem);
   font-weight: 750;
+  overflow-wrap: anywhere;
 }
 
 .galeria-imagenes-videojuego {
@@ -164,6 +167,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 1rem;
 
   margin-bottom: 1.5rem;
@@ -184,6 +188,7 @@
 
 .filtro-opinion-reseñas select {
   min-width: 10rem;
+  max-width: 100%;
   padding: 0.85rem 1.5rem;
   border: none;
   border-radius: 999px;
@@ -230,6 +235,7 @@
 }
 
 .tarjeta-resena {
+  min-width: 0;
   padding: 1.5rem;
 
   border: 2px solid transparent;
@@ -306,12 +312,14 @@
   font-size: 1rem;
   line-height: 1.7;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .titulo-resena {
   margin-bottom: 0.6rem;
   color: #252525;
   font-size: 1.15rem;
+  overflow-wrap: anywhere;
 }
 
 .imagenes-resena {
@@ -410,13 +418,9 @@
   cursor: not-allowed;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 760px) {
   .detalle-videojuego {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .pagina-reseñas {
-    padding: 1.25rem;
   }
 
   .acciones-reseñas {
@@ -439,7 +443,9 @@
   .boton-nueva-resena {
     width: 100%;
   }
+}
 
+@media (max-width: 600px) {
   .cabecera-tarjeta-resena {
     align-items: flex-start;
     flex-direction: column;
