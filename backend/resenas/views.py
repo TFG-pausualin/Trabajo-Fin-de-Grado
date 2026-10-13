@@ -3,40 +3,20 @@ from rest_framework import status, viewsets
 from rest_framework.exceptions import APIException, NotFound, ValidationError
 from rest_framework.response import Response
 
-from resenas.models import Resena
 from config.pagination import ApiPageNumberPagination
 from predicciones.models import Prediccion
 from .parquet_repository import RepositorioResenasParquet
 from .serializers import ResenaSerializer
 from videojuegos.models import Videojuego
-
-
-from rest_framework import viewsets
-from rest_framework.exceptions import (
-    NotFound,
-    ValidationError,
-)
-from rest_framework.response import Response
-
-from config.pagination import ApiPageNumberPagination
-from predicciones.models import Prediccion
-from videojuegos.models import Videojuego
-
 from .models import Resena
-from .parquet_repository import RepositorioResenasParquet
-from .serializers import ResenaSerializer
-
 
 class ResenaViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Resena.objects.none()
+    queryset = []
     serializer_class = ResenaSerializer
     pagination_class = ApiPageNumberPagination
 
     def _obtener_resenas(self):
-        videojuego_id = self.request.query_params.get(
-            "videojuego"
-        )
-
+        videojuego_id = self.request.query_params.get("videojuego")
         if not videojuego_id:
             raise ValidationError(
                 {
@@ -69,44 +49,24 @@ class ResenaViewSet(viewsets.ReadOnlyModelViewSet):
                 resena["videojuego_titulo"] = (
                     videojuego_titulo
                 )
-
         else:
-            resenas = self._obtener_resenas_bd(
-                videojuego_id
-            )
-
-        predicciones = (
-            Prediccion.objects
-            .filter(
-                videojuego_id=videojuego_id
-            )
-            .select_related("videojuego")
-        )
-
+            resenas = self._obtener_resenas_bd(videojuego_id)
+            
+        predicciones = Prediccion.objects.filter(
+            videojuego_id=videojuego_id
+        ).select_related("videojuego")
         resenas.extend(
             {
                 "id": f"nueva:{prediccion.id}",
-                "videojuego": str(
-                    prediccion.videojuego_id
-                ),
-                "videojuego_titulo": (
-                    prediccion.videojuego.titulo
-                ),
-                "parent_asin": str(
-                    prediccion.videojuego_id
-                ),
+                "videojuego": str(prediccion.videojuego_id),
+                "videojuego_titulo": prediccion.videojuego.titulo,
+                "parent_asin": str(prediccion.videojuego_id),
                 "titulo": prediccion.title,
                 "texto": prediccion.text,
-                "texto_normalizado": (
-                    prediccion.review_text_normalized
-                ),
-                "texto_procesado": (
-                    prediccion.review_text_processed
-                ),
+                "texto_normalizado": prediccion.review_text_normalized,
+                "texto_procesado": prediccion.review_text_processed,
                 "puntuacion": prediccion.rating,
-                "compra_verificada": (
-                    prediccion.verified_purchase
-                ),
+                "compra_verificada": prediccion.verified_purchase,
                 "imagenes": [
                     {"large": imagen}
                     for imagen in prediccion.images
@@ -118,33 +78,22 @@ class ResenaViewSet(viewsets.ReadOnlyModelViewSet):
                 "sentimiento": prediccion.sentiment,
                 "origen": "usuario",
                 "creada_en": prediccion.created_at,
-                "actualizada_en": (
-                    prediccion.updated_at
-                ),
+                "actualizada_en": prediccion.updated_at,
                 "asin": None,
                 "votos_utiles": 0,
             }
             for prediccion in predicciones
         )
 
-        sentimiento = self.request.query_params.get(
-            "sentimiento"
-        )
-
+        sentimiento = self.request.query_params.get("sentimiento")
         if sentimiento:
             resenas = [
                 resena
                 for resena in resenas
-                if resena["sentimiento"]
-                == sentimiento
+                if resena["sentimiento"] == sentimiento
             ]
 
-        busqueda = (
-            self.request.query_params
-            .get("search", "")
-            .casefold()
-        )
-
+        busqueda = self.request.query_params.get("search", "").casefold()
         if busqueda:
             campos = (
                 "titulo",
@@ -153,15 +102,11 @@ class ResenaViewSet(viewsets.ReadOnlyModelViewSet):
                 "parent_asin",
                 "videojuego_titulo",
             )
-
             resenas = [
                 resena
                 for resena in resenas
                 if any(
-                    busqueda
-                    in str(
-                        resena.get(campo) or ""
-                    ).casefold()
+                    busqueda in str(resena[campo] or "").casefold()
                     for campo in campos
                 )
             ]
@@ -170,7 +115,6 @@ class ResenaViewSet(viewsets.ReadOnlyModelViewSet):
             "ordering",
             "-fecha_original,-creada_en",
         )
-
         campos_ordenables = {
             "fecha_original",
             "puntuacion",
@@ -178,80 +122,50 @@ class ResenaViewSet(viewsets.ReadOnlyModelViewSet):
             "sentimiento_predicho",
             "creada_en",
         }
-
-        for campo in reversed(
-            orden.split(",")
-        ):
+        for campo in reversed(orden.split(",")):
             descendente = campo.startswith("-")
             nombre = campo.lstrip("-")
-
             if nombre not in campos_ordenables:
                 continue
-
             resenas.sort(
-                key=lambda resena: str(
-                    resena.get(nombre) or ""
-                ),
+                key=lambda resena: str(resena[nombre] or ""),
                 reverse=descendente,
             )
 
         resenas.sort(
-            key=lambda resena: (
-                resena["origen"] == "usuario"
-            ),
+            key=lambda resena: resena["origen"] == "usuario",
             reverse=True,
         )
 
         return resenas
+    
 
-    def list(
-        self,
-        request,
-        *args,
-        **kwargs,
-    ):
+    def list(self, request, *args, **kwargs):
         resenas = self._obtener_resenas()
+        pagina = self.paginate_queryset(resenas)
+        serializer = self.get_serializer(pagina, many=True)
+        return self.get_paginated_response(serializer.data)
 
-        pagina = self.paginate_queryset(
-            resenas
-        )
-
-        if pagina is not None:
-            serializer = self.get_serializer(
-                pagina,
-                many=True,
-            )
-
-            return self.get_paginated_response(
-                serializer.data
-            )
-
-        serializer = self.get_serializer(
-            resenas,
-            many=True,
-        )
-
-        return Response(serializer.data)
-
-    def retrieve(
-        self,
-        request,
-        *args,
-        **kwargs,
-    ):
+    def retrieve(self, request, *args, **kwargs):
         identificador = str(kwargs["pk"])
 
         if identificador.startswith("nueva:"):
-            return self._recuperar_prediccion(
-                identificador
+            raise NotFound(
+                "El detalle de esta predicción "
+                "no está disponible mediante esta ruta."
             )
 
-        repositorio = RepositorioResenasParquet()
+        if ":" in identificador:
+            repositorio = (
+                RepositorioResenasParquet()
+            )
 
-        if (
-            repositorio.esta_disponible()
-            and ":" in identificador
-        ):
+            if not repositorio.esta_disponible():
+                raise NotFound(
+                    "Los archivos Parquet no están "
+                    "disponibles en este entorno."
+                )
+
             resena = repositorio.obtener_por_id(
                 identificador
             )
@@ -259,7 +173,7 @@ class ResenaViewSet(viewsets.ReadOnlyModelViewSet):
             if resena is None:
                 raise NotFound(
                     "No se encontró la reseña "
-                    "en los archivos parquet."
+                    "en los archivos Parquet."
                 )
 
             videojuego_titulo = (
@@ -280,101 +194,15 @@ class ResenaViewSet(viewsets.ReadOnlyModelViewSet):
             )
 
             return Response(
-                self.get_serializer(
-                    resena
-                ).data
+                self.get_serializer(resena).data
             )
 
-        return self._recuperar_resena_bd(
-            identificador
-        )
-
-    @staticmethod
-    def _serializar_resena_bd(
-        resena: Resena,
-    ) -> dict:
-        sentimiento = (
-            resena.sentimiento_predicho
-            or resena.sentimiento_real
-        )
-
-        return {
-            "id": str(resena.id),
-            "videojuego": str(
-                resena.videojuego_id
-            ),
-            "videojuego_titulo": (
-                resena.videojuego.titulo
-            ),
-            "parent_asin": str(
-                resena.videojuego_id
-            ),
-            "titulo": resena.titulo,
-            "texto": resena.texto,
-            "texto_normalizado": (
-                resena.texto_normalizado
-            ),
-            "texto_procesado": (
-                resena.texto_procesado
-            ),
-            "puntuacion": resena.puntuacion,
-            "compra_verificada": (
-                resena.compra_verificada
-            ),
-            "imagenes": resena.imagenes,
-            "usuario_original_id": (
-                resena.usuario_original_id
-            ),
-            "fecha_original": (
-                resena.fecha_original
-            ),
-            "sentimiento_predicho": (
-                resena.sentimiento_predicho
-            ),
-            "sentimiento_real": (
-                resena.sentimiento_real
-            ),
-            "sentimiento": sentimiento,
-            "origen": resena.origen,
-            "creada_en": resena.creada_en,
-            "actualizada_en": (
-                resena.actualizada_en
-            ),
-            "asin": resena.asin,
-            "votos_utiles": (
-                resena.votos_utiles
-            ),
-        }
-
-    def _obtener_resenas_bd(
-        self,
-        videojuego_id: str,
-            ) -> list[dict]:
-        queryset = (
-            Resena.objects
-            .select_related("videojuego")
-            .filter(
-                videojuego_id=videojuego_id
-            )
-        )
-
-        return [
-            self._serializar_resena_bd(
-                resena
-            )
-            for resena in queryset
-        ]
-
-    def _recuperar_resena_bd(
-        self,
-        identificador: str,
-    ) -> Response:
         try:
             resena_id = int(identificador)
         except ValueError as error:
             raise NotFound(
-                "El identificador de la "
-                "reseña no es válido."
+                "El identificador de la reseña "
+                "no es válido."
             ) from error
 
         try:
@@ -388,82 +216,83 @@ class ResenaViewSet(viewsets.ReadOnlyModelViewSet):
                 "No se encontró la reseña."
             ) from error
 
-        datos = self._serializar_resena_bd(
-            resena
-        )
+        datos = self._serializar_resena_bd(resena)
 
         return Response(
-            self.get_serializer(datos).data
+        self.get_serializer(datos).data
+    )
+    
+    @staticmethod
+    def _serializar_resena_bd(
+        resena: Resena,
+        ) -> dict:
+        sentimiento = (
+        resena.sentimiento_predicho
+        or resena.sentimiento_real
         )
 
-    def _recuperar_prediccion(
+        return {
+        "id": str(resena.id),
+        "videojuego": str(
+            resena.videojuego_id
+        ),
+        "videojuego_titulo": (
+            resena.videojuego.titulo
+        ),
+        "parent_asin": str(
+            resena.videojuego_id
+        ),
+        "titulo": resena.titulo,
+        "texto": resena.texto,
+        "texto_normalizado": (
+            resena.texto_normalizado
+        ),
+        "texto_procesado": (
+            resena.texto_procesado
+        ),
+        "puntuacion": resena.puntuacion,
+        "compra_verificada": (
+            resena.compra_verificada
+        ),
+        "imagenes": resena.imagenes,
+        "usuario_original_id": (
+            resena.usuario_original_id
+        ),
+        "fecha_original": (
+            resena.fecha_original
+        ),
+        "sentimiento_predicho": (
+            resena.sentimiento_predicho
+        ),
+        "sentimiento_real": (
+            resena.sentimiento_real
+        ),
+        "sentimiento": sentimiento,
+        "origen": resena.origen,
+        "creada_en": resena.creada_en,
+        "actualizada_en": (
+            resena.actualizada_en
+        ),
+        "asin": resena.asin,
+        "votos_utiles": (
+            resena.votos_utiles
+        ),
+    }
+
+
+    def _obtener_resenas_bd(
         self,
-        identificador: str,
-    ) -> Response:
-        try:
-            prediccion_id = int(
-                identificador.removeprefix(
-                    "nueva:"
-                )
+        videojuego_id: str,
+    ) -> list:
+        queryset = (
+            Resena.objects
+            .select_related("videojuego")
+            .filter(
+                videojuego_id=videojuego_id
             )
-        except ValueError as error:
-            raise NotFound(
-                "El identificador de la "
-                "predicción no es válido."
-            ) from error
-
-        try:
-            prediccion = (
-                Prediccion.objects
-                .select_related("videojuego")
-                .get(id=prediccion_id)
-            )
-        except Prediccion.DoesNotExist as error:
-            raise NotFound(
-                "No se encontró la predicción."
-            ) from error
-
-        datos = {
-            "id": f"nueva:{prediccion.id}",
-            "videojuego": str(
-                prediccion.videojuego_id
-            ),
-            "videojuego_titulo": (
-                prediccion.videojuego.titulo
-            ),
-            "parent_asin": str(
-                prediccion.videojuego_id
-            ),
-            "titulo": prediccion.title,
-            "texto": prediccion.text,
-            "texto_normalizado": (
-                prediccion.review_text_normalized
-            ),
-            "texto_procesado": (
-                prediccion.review_text_processed
-            ),
-            "puntuacion": prediccion.rating,
-            "compra_verificada": (
-                prediccion.verified_purchase
-            ),
-            "imagenes": [
-                {"large": imagen}
-                for imagen in prediccion.images
-            ],
-            "usuario_original_id": None,
-            "fecha_original": None,
-            "sentimiento_predicho": None,
-            "sentimiento_real": None,
-            "sentimiento": prediccion.sentiment,
-            "origen": "usuario",
-            "creada_en": prediccion.created_at,
-            "actualizada_en": (
-                prediccion.updated_at
-            ),
-            "asin": None,
-            "votos_utiles": 0,
-        }
-
-        return Response(
-            self.get_serializer(datos).data
         )
+    
+        return [
+            self._serializar_resena_bd(resena)
+            for resena in queryset
+        ]
