@@ -88,71 +88,126 @@ export default function Estadisticas() {
   }, [intento]);
 
   useEffect(() => {
-    const actualizarAlVolver = () => {
-      if (document.visibilityState === "visible") {
-        setIntento((actual) => actual + 1);
-      }
-    };
+  const actualizarAlVolver = () => {
+    if (document.visibilityState === "visible") {
+      setIntento((actual) => actual + 1);
+    }
+  };
 
-    window.addEventListener("focus", actualizarAlVolver);
-    document.addEventListener("visibilitychange", actualizarAlVolver);
+  window.addEventListener(
+    "focus",
+    actualizarAlVolver,
+  );
 
-    return () => {
-      window.removeEventListener("focus", actualizarAlVolver);
-      document.removeEventListener("visibilitychange", actualizarAlVolver);
-    };
-  }, []);
+  document.addEventListener(
+    "visibilitychange",
+    actualizarAlVolver,
+  );
 
-  useEffect(() => {
-    const termino = busqueda.trim();
+  return () => {
+    window.removeEventListener(
+      "focus",
+      actualizarAlVolver,
+    );
+
+    document.removeEventListener(
+      "visibilitychange",
+      actualizarAlVolver,
+    );
+  };
+}, []);
+
+useEffect(() => {
+  const termino = busqueda.trim();
+  let activa = true;
+
+  const temporizador = window.setTimeout(async () => {
     if (termino.length < 2) {
-      setResultadosBusqueda([]);
-      setErrorBusqueda("");
-      return;
-    }
-
-    let activa = true;
-    const temporizador = window.setTimeout(async () => {
-      setErrorBusqueda("");
-      try {
-        const respuesta = await obtenerVideojuegos(1, 8, termino);
-        if (activa) setResultadosBusqueda(respuesta.resultados);
-      } catch {
-        if (activa) setErrorBusqueda("No se pudieron buscar videojuegos.");
+      if (activa) {
+        setResultadosBusqueda([]);
+        setErrorBusqueda("");
       }
-    }, 250);
 
-    return () => {
-      activa = false;
-      window.clearTimeout(temporizador);
-    };
-  }, [busqueda]);
-
-  useEffect(() => {
-    if (!videojuegoSeleccionado) {
-      setMetricasVideojuego(null);
       return;
     }
 
-    let activa = true;
-    setCargandoVideojuego(true);
-    setErrorVideojuego("");
+    if (activa) {
+      setErrorBusqueda("");
+    }
 
-    obtenerMetricasVideojuego(videojuegoSeleccionado.id)
+    try {
+      const respuesta = await obtenerVideojuegos(
+        1,
+        8,
+        termino,
+      );
+
+      if (activa) {
+        setResultadosBusqueda(
+          respuesta.resultados,
+        );
+      }
+    } catch {
+      if (activa) {
+        setErrorBusqueda(
+          "No se pudieron buscar videojuegos.",
+        );
+      }
+    }
+  }, 250);
+
+  return () => {
+    activa = false;
+    window.clearTimeout(temporizador);
+  };
+}, [busqueda]);
+
+useEffect(() => {
+  let activa = true;
+
+  const temporizador = window.setTimeout(() => {
+    if (!videojuegoSeleccionado) {
+      if (activa) {
+        setMetricasVideojuego(null);
+        setCargandoVideojuego(false);
+        setErrorVideojuego("");
+      }
+
+      return;
+    }
+
+    if (activa) {
+      setCargandoVideojuego(true);
+      setErrorVideojuego("");
+    }
+
+    obtenerMetricasVideojuego(
+      videojuegoSeleccionado.id,
+    )
       .then((respuesta) => {
-        if (activa) setMetricasVideojuego(respuesta);
+        if (activa) {
+          setMetricasVideojuego(respuesta);
+        }
       })
       .catch(() => {
-        if (activa) setErrorVideojuego("No se pudieron cargar sus estadísticas.");
+        if (activa) {
+          setErrorVideojuego(
+            "No se pudieron cargar sus estadísticas.",
+          );
+        }
       })
       .finally(() => {
-        if (activa) setCargandoVideojuego(false);
+        if (activa) {
+          setCargandoVideojuego(false);
+        }
       });
+  }, 0);
 
-    return () => {
-      activa = false;
-    };
-  }, [videojuegoSeleccionado, intento]);
+  return () => {
+    activa = false;
+    window.clearTimeout(temporizador);
+  };
+}, [videojuegoSeleccionado, intento]);
 
   function seleccionarVideojuego(videojuego: Videojuego) {
     setVideojuegoSeleccionado(videojuego);
