@@ -8,7 +8,7 @@ from predicciones.models import Prediccion
 from .parquet_repository import RepositorioResenasParquet
 from .serializers import ResenaSerializer
 from videojuegos.models import Videojuego
-
+from .models import Resena
 
 class ResenaViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = []
@@ -27,19 +27,31 @@ class ResenaViewSet(viewsets.ReadOnlyModelViewSet):
                 }
             )
 
-        try:
-            resenas = RepositorioResenasParquet().listar_por_videojuego(
+        repositorio = RepositorioResenasParquet()
+
+        if repositorio.esta_disponible():
+            resenas = repositorio.listar_por_videojuego(
                 videojuego_id
             )
-        except FileNotFoundError as error:
-            raise APIException(str(error)) from error
 
-        videojuego_titulo = Videojuego.objects.filter(
-            id=videojuego_id
-        ).values_list("titulo", flat=True).first() or ""
-        for resena in resenas:
-            resena["videojuego_titulo"] = videojuego_titulo
+            videojuego_titulo = (
+                Videojuego.objects
+                .filter(id=videojuego_id)
+                .values_list(
+                    "titulo",
+                    flat=True,
+                )
+                .first()
+                or ""
+            )
 
+            for resena in resenas:
+                resena["videojuego_titulo"] = (
+                    videojuego_titulo
+                )
+        else:
+            resenas = self._obtener_resenas_bd(videojuego_id)
+            
         predicciones = Prediccion.objects.filter(
             videojuego_id=videojuego_id
         ).select_related("videojuego")
@@ -126,6 +138,7 @@ class ResenaViewSet(viewsets.ReadOnlyModelViewSet):
         )
 
         return resenas
+    
 
     def list(self, request, *args, **kwargs):
         resenas = self._obtener_resenas()
@@ -134,14 +147,152 @@ class ResenaViewSet(viewsets.ReadOnlyModelViewSet):
         return self.get_paginated_response(serializer.data)
 
     def retrieve(self, request, *args, **kwargs):
-        try:
-            resena = RepositorioResenasParquet().obtener_por_id(
-                kwargs["pk"]
+        identificador = str(kwargs["pk"])
+
+        if identificador.startswith("nueva:"):
+            raise NotFound(
+                "El detalle de esta predicción "
+                "no está disponible mediante esta ruta."
             )
-        except FileNotFoundError as error:
-            raise APIException(str(error)) from error
 
-        if resena is None:
-            raise NotFound("No se encontró la reseña en los archivos parquet.")
+        if ":" in identificador:
+            repositorio = (
+                RepositorioResenasParquet()
+            )
 
-        return Response(self.get_serializer(resena).data)
+            if not repositorio.esta_disponible():
+                raise NotFound(
+                    "Los archivos Parquet no están "
+                    "disponibles en este entorno."
+                )
+
+            resena = repositorio.obtener_por_id(
+                identificador
+            )
+
+            if resena is None:
+                raise NotFound(
+                    "No se encontró la reseña "
+                    "en los archivos Parquet."
+                )
+
+            videojuego_titulo = (
+                Videojuego.objects
+                .filter(
+                    id=resena["videojuego"]
+                )
+                .values_list(
+                    "titulo",
+                    flat=True,
+                )
+                .first()
+                or ""
+            )
+
+            resena["videojuego_titulo"] = (
+                videojuego_titulo
+            )
+
+            return Response(
+                self.get_serializer(resena).data
+            )
+
+        try:
+            resena_id = int(identificador)
+        except ValueError as error:
+            raise NotFound(
+                "El identificador de la reseña "
+                "no es válido."
+            ) from error
+
+        try:
+            resena = (
+                Resena.objects
+                .select_related("videojuego")
+                .get(id=resena_id)
+            )
+        except Resena.DoesNotExist as error:
+            raise NotFound(
+                "No se encontró la reseña."
+            ) from error
+
+        datos = self._serializar_resena_bd(resena)
+
+        return Response(
+        self.get_serializer(datos).data
+    )
+    
+    @staticmethod
+    def _serializar_resena_bd(
+        resena: Resena,
+        ) -> dict:
+        sentimiento = (
+        resena.sentimiento_predicho
+        or resena.sentimiento_real
+        )
+
+        return {
+        "id": str(resena.id),
+        "videojuego": str(
+            resena.videojuego_id
+        ),
+        "videojuego_titulo": (
+            resena.videojuego.titulo
+        ),
+        "parent_asin": str(
+            resena.videojuego_id
+        ),
+        "titulo": resena.titulo,
+        "texto": resena.texto,
+        "texto_normalizado": (
+            resena.texto_normalizado
+        ),
+        "texto_procesado": (
+            resena.texto_procesado
+        ),
+        "puntuacion": resena.puntuacion,
+        "compra_verificada": (
+            resena.compra_verificada
+        ),
+        "imagenes": resena.imagenes,
+        "usuario_original_id": (
+            resena.usuario_original_id
+        ),
+        "fecha_original": (
+            resena.fecha_original
+        ),
+        "sentimiento_predicho": (
+            resena.sentimiento_predicho
+        ),
+        "sentimiento_real": (
+            resena.sentimiento_real
+        ),
+        "sentimiento": sentimiento,
+        "origen": resena.origen,
+        "creada_en": resena.creada_en,
+        "actualizada_en": (
+            resena.actualizada_en
+        ),
+        "asin": resena.asin,
+        "votos_utiles": (
+            resena.votos_utiles
+        ),
+    }
+
+
+    def _obtener_resenas_bd(
+        self,
+        videojuego_id: str,
+    ) -> list:
+        queryset = (
+            Resena.objects
+            .select_related("videojuego")
+            .filter(
+                videojuego_id=videojuego_id
+            )
+        )
+    
+        return [
+            self._serializar_resena_bd(resena)
+            for resena in queryset
+        ]

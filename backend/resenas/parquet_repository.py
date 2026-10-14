@@ -39,18 +39,39 @@ CAMPOS_IDENTIDAD = [
 
 
 class RepositorioResenasParquet:
-    def __init__(self, directorio_procesado: Path | None = None) -> None:
-        self.directorio_procesado = (
-            directorio_procesado
-            or settings.BASE_DIR.parent / "data" / "procesado"
-        )
-        self.directorio_originales = (
-            self.directorio_procesado / "resenas_sin_duplicados"
-        )
-        self.directorio_etiquetadas = (
-            self.directorio_procesado / "resenas_etiquetadas"
+    def __init__(
+        self,
+        directorio_procesado: Path | None = None,
+    ) -> None:
+        directorio_configurado = getattr(
+            settings,
+            "RESENAS_PARQUET_DIR",
+            settings.BASE_DIR.parent
+            / "data"
+            / "procesado",
         )
 
+        self.directorio_procesado = (
+            directorio_procesado
+            or Path(directorio_configurado)
+        )
+
+        self.directorio_originales = (
+            self.directorio_procesado
+            / "resenas_sin_duplicados"
+        )
+
+        self.directorio_etiquetadas = (
+            self.directorio_procesado
+            / "resenas_etiquetadas"
+        )
+        
+    def esta_disponible(self) -> bool:
+        return (
+            self.directorio_originales.is_dir()
+            and self.directorio_etiquetadas.is_dir()
+        )
+        
     def listar_por_videojuego(
         self,
         parent_asin: str,

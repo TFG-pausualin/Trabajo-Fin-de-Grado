@@ -23,10 +23,16 @@ load_dotenv(BASE_DIR.parent / ".env")
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-mbzf4d+#9g#kckv1o+y@c5jsp#vbvp%lk*b2c#m6!(2bbd-j1x'
+SECRET_KEY = os.getenv(
+    "DJANGO_SECRET_KEY",
+    "django-insecure-solo-desarrollo-local",
+)
 
+DEBUG = os.getenv(
+    "DJANGO_DEBUG",
+    "True",
+).lower() == "true"
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
 ALLOWED_HOSTS = [
     host.strip()
@@ -60,6 +66,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -73,7 +80,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "frontend_dist"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -87,36 +94,48 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
+USE_SQLITE = os.getenv(
+    "USE_SQLITE",
+    "False",
+).lower() == "true"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv(
-            "POSTGRES_DB",
-            "tfg_videojuegos",
-        ),
-        "USER": os.getenv(
-            "POSTGRES_USER",
-            "postgres",
-        ),
-        "PASSWORD": os.getenv(
-            "POSTGRES_PASSWORD",
-            "postgres",
-        ),
-        "HOST": os.getenv(
-            "POSTGRES_HOST",
-            "localhost",
-        ),
-        "PORT": os.getenv(
-            "POSTGRES_PORT",
-            "5432",
-        ),
+
+if USE_SQLITE:
+    SQLITE_PATH = os.getenv(
+        "SQLITE_PATH",
+        str(BASE_DIR / "db.sqlite3"),
+    )
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": SQLITE_PATH,
+        }
     }
-}
-
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": (
+                "django.db.backends.postgresql"
+            ),
+            "NAME": os.getenv("POSTGRES_DB"),
+            "USER": os.getenv("POSTGRES_USER"),
+            "PASSWORD": os.getenv(
+                "POSTGRES_PASSWORD"
+            ),
+            "HOST": os.getenv(
+                "POSTGRES_HOST",
+                "localhost",
+            ),
+            "PORT": os.getenv(
+                "POSTGRES_PORT",
+                "5432",
+            ),
+        }
+    }
+    
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
 
@@ -156,23 +175,84 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
-STATIC_URL = 'static/'
+# Static files
+STATIC_URL = "/static/"
 
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "frontend_dist" / "assets",
+]
+
+STORAGES = {
+    "default": {
+        "BACKEND": (
+            "django.core.files.storage."
+            "FileSystemStorage"
+        ),
+    },
+    "staticfiles": {
+        "BACKEND": (
+            "whitenoise.storage."
+            "CompressedManifestStaticFilesStorage"
+        ),
+    },
+}
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
-MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
-}
-
+if DEBUG:
+    MAILERS = {
+        "default": {
+            "BACKEND": (
+                "django.core.mail.backends.console."
+                "EmailBackend"
+            ),
+        },
+    }
+else:
+    MAILERS = {
+        "default": {
+            "BACKEND": (
+                "django.core.mail.backends.smtp."
+                "EmailBackend"
+            ),
+            "OPTIONS": {
+                "host": os.getenv(
+                    "EMAIL_HOST",
+                    "localhost",
+                ),
+                "port": int(
+                    os.getenv(
+                        "EMAIL_PORT",
+                        "587",
+                    )
+                ),
+                "username": os.getenv(
+                    "EMAIL_HOST_USER",
+                    "",
+                ),
+                "password": os.getenv(
+                    "EMAIL_HOST_PASSWORD",
+                    "",
+                ),
+                "use_tls": True,
+            },
+        },
+    }
+    
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
+    origin.strip()
+    for origin in os.getenv(
+        "CORS_ALLOWED_ORIGINS",
+        (
+            "http://localhost:5173,"
+            "http://127.0.0.1:5173"
+        ),
+    ).split(",")
+    if origin.strip()
 ]
-
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": (
         "drf_spectacular.openapi.AutoSchema"
@@ -192,3 +272,28 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
     "COMPONENT_SPLIT_REQUEST": True,
 }
+
+SECURE_PROXY_SSL_HEADER = (
+    "HTTP_X_FORWARDED_PROTO",
+    "https",
+)
+
+RESENAS_PARQUET_DIR = Path(
+    os.getenv(
+        "RESENAS_PARQUET_DIR",
+        str(
+            BASE_DIR.parent
+            / "data"
+            / "procesado"
+        ),
+    )
+)
+if os.getenv("USE_DEMO_PARQUET", "False").lower() == "true":
+    RESENAS_PARQUET_DIR = (
+        BASE_DIR
+        / "data_demo"
+    )
+
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG

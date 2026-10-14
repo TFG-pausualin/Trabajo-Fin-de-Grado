@@ -1,7 +1,15 @@
-import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "node:path";
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-})
+  base: "/",
+  build: {
+    outDir: path.resolve(
+      __dirname,
+      "../backend/frontend_dist",
+    ),
+    emptyOutDir: true,
+  },
+});

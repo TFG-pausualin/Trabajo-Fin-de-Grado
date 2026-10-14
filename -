@@ -1,0 +1,902 @@
+openapi: 3.0.3
+info:
+  title: API de análisis de sentimiento de videojuegos
+  version: 1.0.0
+  description: API para consultar videojuegos y reseñas y generar predicciones de
+    sentimiento.
+paths:
+  /api/predicciones/:
+    get:
+      operationId: api_predicciones_list
+      description: Crea una reseña, predice su sentimiento y la guarda.
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Prediccion'
+          description: ''
+    post:
+      operationId: api_predicciones_create
+      description: Clasifica una reseña asociada a un videojuego existente. El título
+        y el identificador del videojuego se obtienen automáticamente de su registro
+        y no se aceptan como datos editables de la reseña.
+      summary: Clasificar una reseña
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrediccionRequest'
+            examples:
+              SolicitudDePredicción:
+                value:
+                  videojuego_id: B001234567
+                  title: Great game
+                  text: I loved the story and the gameplay.
+                  rating: 5
+                  verified_purchase: true
+                  images:
+                  - https://example.com/imagen.jpg
+                summary: Solicitud de predicción
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PrediccionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PrediccionRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prediccion'
+              examples:
+                RespuestaDePredicción:
+                  value:
+                    id: 1
+                    videojuego: B001234567
+                    videojuego_titulo: Great game
+                    parent_asin: B001234567
+                    rating: 5
+                    title: Great game
+                    text: I loved the story and the gameplay.
+                    verified_purchase: true
+                    images:
+                    - https://example.com/imagen.jpg
+                    review_text_normalized: Great game I loved the story and the gameplay.
+                    review_text_processed: love story gameplay
+                    sentiment: positivo
+                    created_at: '2026-09-28T12:00:00Z'
+                    updated_at: '2026-09-28T12:00:00Z'
+                  summary: Respuesta de predicción
+          description: ''
+  /api/predicciones/{id}/:
+    get:
+      operationId: api_predicciones_retrieve
+      description: Crea una reseña, predice su sentimiento y la guarda.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this predicción.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prediccion'
+          description: ''
+    put:
+      operationId: api_predicciones_update
+      description: Crea una reseña, predice su sentimiento y la guarda.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this predicción.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrediccionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PrediccionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PrediccionRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prediccion'
+          description: ''
+    patch:
+      operationId: api_predicciones_partial_update
+      description: Crea una reseña, predice su sentimiento y la guarda.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this predicción.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPrediccionRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPrediccionRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPrediccionRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prediccion'
+          description: ''
+    delete:
+      operationId: api_predicciones_destroy
+      description: Crea una reseña, predice su sentimiento y la guarda.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this predicción.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/resenas/:
+    get:
+      operationId: api_resenas_list
+      parameters:
+      - name: limite
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: pagina
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResenaList'
+          description: ''
+    post:
+      operationId: api_resenas_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResenaRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResenaRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResenaRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resena'
+          description: ''
+  /api/resenas/{id}/:
+    get:
+      operationId: api_resenas_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this reseña.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resena'
+          description: ''
+    put:
+      operationId: api_resenas_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this reseña.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResenaRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResenaRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResenaRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resena'
+          description: ''
+    patch:
+      operationId: api_resenas_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this reseña.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedResenaRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedResenaRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedResenaRequest'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resena'
+          description: ''
+    delete:
+      operationId: api_resenas_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this reseña.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/videojuegos/:
+    get:
+      operationId: api_videojuegos_list
+      parameters:
+      - name: limite
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: pagina
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedVideojuegoList'
+          description: ''
+  /api/videojuegos/{id}/:
+    get:
+      operationId: api_videojuegos_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          description: Identificador parent_asin del videojuego.
+        required: true
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Videojuego'
+          description: ''
+  /api/videojuegos/resumen/:
+    get:
+      operationId: api_videojuegos_resumen_retrieve
+      tags:
+      - api
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Videojuego'
+          description: ''
+components:
+  schemas:
+    NullEnum:
+      enum:
+      - null
+    OrigenEnum:
+      enum:
+      - historica
+      - usuario
+      type: string
+      description: |-
+        * `historica` - Reseña histórica
+        * `usuario` - Creada por un usuario
+    PaginatedResenaList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?pagina=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?pagina=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Resena'
+    PaginatedVideojuegoList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?pagina=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?pagina=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Videojuego'
+    PatchedPrediccionRequest:
+      type: object
+      properties:
+        videojuego_id:
+          type: string
+          minLength: 1
+          description: Identificador parent_asin del videojuego existente. El título
+            y los demás datos del videojuego se cargan desde su registro y son de
+            solo lectura.
+          writeOnly: true
+        rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          nullable: true
+          description: Puntuación seleccionada entre 1 y 5.
+        title:
+          type: string
+          minLength: 1
+          description: Título introducido en el formulario.
+          maxLength: 500
+        text:
+          type: string
+          minLength: 1
+          description: Texto original introducido por el usuario.
+        verified_purchase:
+          type: boolean
+          description: Indica si la compra fue verificada.
+        images:
+          description: Imágenes asociadas a la opinión.
+    PatchedResenaRequest:
+      type: object
+      properties:
+        videojuego:
+          type: string
+          minLength: 1
+          description: Videojuego al que pertenece la reseña.
+        titulo:
+          type: string
+          description: Título original de la reseña.
+          maxLength: 500
+        texto:
+          type: string
+          description: Contenido original de la reseña.
+        puntuacion:
+          type: integer
+          maximum: 5
+          minimum: 1
+          nullable: true
+          description: Puntuación entre una y cinco estrellas.
+        compra_verificada:
+          type: boolean
+          description: Indica si la compra fue verificada.
+        imagenes:
+          description: URLs de imágenes asociadas a la reseña.
+        usuario_original_id:
+          type: string
+          nullable: true
+          description: Identificador del usuario en el conjunto de datos original.
+          maxLength: 200
+        fecha_original:
+          type: string
+          format: date-time
+          nullable: true
+          description: Fecha de publicación en el conjunto de datos original.
+    Prediccion:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        videojuego:
+          type: string
+          description: Identificador parent_asin del videojuego.
+          readOnly: true
+        videojuego_titulo:
+          type: string
+          readOnly: true
+          description: Título cargado automáticamente desde el videojuego.
+        parent_asin:
+          type: string
+          readOnly: true
+          description: Identificador del videojuego cargado automáticamente desde
+            su registro.
+        rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          nullable: true
+          description: Puntuación seleccionada entre 1 y 5.
+        title:
+          type: string
+          description: Título introducido en el formulario.
+          maxLength: 500
+        text:
+          type: string
+          description: Texto original introducido por el usuario.
+        verified_purchase:
+          type: boolean
+          description: Indica si la compra fue verificada.
+        images:
+          description: Imágenes asociadas a la opinión.
+        review_text_normalized:
+          type: string
+          readOnly: true
+          description: Título y texto combinados después de la normalización.
+        review_text_processed:
+          type: string
+          readOnly: true
+          description: Texto utilizado como entrada para TF-IDF.
+        sentiment:
+          allOf:
+          - $ref: '#/components/schemas/SentimientoRealEnum'
+          readOnly: true
+          description: |-
+            Sentimiento generado por el modelo SVM.
+
+            * `negativo` - Negativo
+            * `neutral` - Neutral
+            * `positivo` - Positivo
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - parent_asin
+      - review_text_normalized
+      - review_text_processed
+      - sentiment
+      - text
+      - title
+      - updated_at
+      - videojuego
+      - videojuego_titulo
+    PrediccionRequest:
+      type: object
+      properties:
+        videojuego_id:
+          type: string
+          minLength: 1
+          description: Identificador parent_asin del videojuego existente. El título
+            y los demás datos del videojuego se cargan desde su registro y son de
+            solo lectura.
+          writeOnly: true
+        rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          nullable: true
+          description: Puntuación seleccionada entre 1 y 5.
+        title:
+          type: string
+          minLength: 1
+          description: Título introducido en el formulario.
+          maxLength: 500
+        text:
+          type: string
+          minLength: 1
+          description: Texto original introducido por el usuario.
+        verified_purchase:
+          type: boolean
+          description: Indica si la compra fue verificada.
+        images:
+          description: Imágenes asociadas a la opinión.
+      required:
+      - text
+      - title
+      - videojuego_id
+    Resena:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        videojuego:
+          type: string
+          description: Videojuego al que pertenece la reseña.
+        videojuego_titulo:
+          type: string
+          readOnly: true
+        parent_asin:
+          type: string
+          readOnly: true
+        titulo:
+          type: string
+          description: Título original de la reseña.
+          maxLength: 500
+        texto:
+          type: string
+          description: Contenido original de la reseña.
+        texto_normalizado:
+          type: string
+          readOnly: true
+          description: Texto normalizado utilizado para mostrar y analizar la reseña.
+        texto_procesado:
+          type: string
+          readOnly: true
+          description: Texto procesado utilizado como entrada del vectorizador TF-IDF.
+        puntuacion:
+          type: integer
+          maximum: 5
+          minimum: 1
+          nullable: true
+          description: Puntuación entre una y cinco estrellas.
+        compra_verificada:
+          type: boolean
+          description: Indica si la compra fue verificada.
+        imagenes:
+          description: URLs de imágenes asociadas a la reseña.
+        usuario_original_id:
+          type: string
+          nullable: true
+          description: Identificador del usuario en el conjunto de datos original.
+          maxLength: 200
+        fecha_original:
+          type: string
+          format: date-time
+          nullable: true
+          description: Fecha de publicación en el conjunto de datos original.
+        sentimiento_predicho:
+          readOnly: true
+          nullable: true
+          description: |-
+            Sentimiento calculado por el modelo SVM.
+
+            * `negativo` - Negativo
+            * `neutral` - Neutral
+            * `positivo` - Positivo
+          oneOf:
+          - $ref: '#/components/schemas/SentimientoRealEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        sentimiento_real:
+          readOnly: true
+          nullable: true
+          description: |-
+            Etiqueta histórica o sentimiento obtenido a partir de la puntuación.
+
+            * `negativo` - Negativo
+            * `neutral` - Neutral
+            * `positivo` - Positivo
+          oneOf:
+          - $ref: '#/components/schemas/SentimientoRealEnum'
+          - $ref: '#/components/schemas/NullEnum'
+        sentimiento:
+          type: string
+          readOnly: true
+        origen:
+          allOf:
+          - $ref: '#/components/schemas/OrigenEnum'
+          readOnly: true
+          description: |-
+            Origen de la reseña.
+
+            * `historica` - Reseña histórica
+            * `usuario` - Creada por un usuario
+        creada_en:
+          type: string
+          format: date-time
+          readOnly: true
+        actualizada_en:
+          type: string
+          format: date-time
+          readOnly: true
+        asin:
+          type: string
+          readOnly: true
+          nullable: true
+          description: Identificador ASIN del producto reseñado.
+        votos_utiles:
+          type: integer
+          readOnly: true
+          description: Número de votos útiles de la reseña.
+      required:
+      - actualizada_en
+      - asin
+      - creada_en
+      - id
+      - origen
+      - parent_asin
+      - sentimiento
+      - sentimiento_predicho
+      - sentimiento_real
+      - texto_normalizado
+      - texto_procesado
+      - videojuego
+      - videojuego_titulo
+      - votos_utiles
+    ResenaRequest:
+      type: object
+      properties:
+        videojuego:
+          type: string
+          minLength: 1
+          description: Videojuego al que pertenece la reseña.
+        titulo:
+          type: string
+          description: Título original de la reseña.
+          maxLength: 500
+        texto:
+          type: string
+          description: Contenido original de la reseña.
+        puntuacion:
+          type: integer
+          maximum: 5
+          minimum: 1
+          nullable: true
+          description: Puntuación entre una y cinco estrellas.
+        compra_verificada:
+          type: boolean
+          description: Indica si la compra fue verificada.
+        imagenes:
+          description: URLs de imágenes asociadas a la reseña.
+        usuario_original_id:
+          type: string
+          nullable: true
+          description: Identificador del usuario en el conjunto de datos original.
+          maxLength: 200
+        fecha_original:
+          type: string
+          format: date-time
+          nullable: true
+          description: Fecha de publicación en el conjunto de datos original.
+      required:
+      - videojuego
+    SentimientoRealEnum:
+      enum:
+      - negativo
+      - neutral
+      - positivo
+      type: string
+      description: |-
+        * `negativo` - Negativo
+        * `neutral` - Neutral
+        * `positivo` - Positivo
+    Videojuego:
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+          description: Identificador parent_asin del videojuego.
+        titulo:
+          type: string
+          readOnly: true
+          description: Título del videojuego.
+        puntuacion_media:
+          type: number
+          format: double
+          readOnly: true
+          nullable: true
+          description: Puntuación media calculada a partir de las reseñas procesadas.
+        numero_valoraciones:
+          type: integer
+          readOnly: true
+          description: Número de reseñas procesadas disponibles para el videojuego.
+        categoria_principal:
+          type: string
+          readOnly: true
+          nullable: true
+          description: Categoría principal del videojuego.
+        tienda:
+          type: string
+          readOnly: true
+          nullable: true
+          description: Tienda asociada al videojuego.
+        detalles:
+          readOnly: true
+          description: Detalles adicionales del videojuego.
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - categoria_principal
+      - created_at
+      - detalles
+      - id
+      - numero_valoraciones
+      - puntuacion_media
+      - tienda
+      - titulo
+      - updated_at
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
