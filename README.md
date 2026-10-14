@@ -91,10 +91,6 @@ Abre la dirección que indique Vite, normalmente <http://localhost:5173>.
 
 Los archivos de datos y modelos se excluyen del control de versiones. Para disponer del catálogo, mostrar las reseñas históricas y clasificar opiniones, asegúrate de tener localmente:
 
-- Los metadatos preparados en `data/provisional/metadatos_videojuegos.parquet`.
-- Los metadatos originales en `data/raiz/meta_Video_Games.jsonl.gz`.
-- Los bloques Parquet originales en `data/procesado/resenas_sin_duplicados/`.
-- Sus bloques etiquetados correspondientes en `data/procesado/resenas_etiquetadas/`.
 - El vectorizador TF-IDF en `models/primera_iteracion/vectorizacion/vectorizador_tfidf.joblib`.
 - El modelo SVM en `models/segunda_iteracion/svm/modelo_optimizado/modelo_svm_optimizado.joblib`.
 
