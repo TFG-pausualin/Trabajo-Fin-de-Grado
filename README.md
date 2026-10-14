@@ -105,7 +105,6 @@ Los bloques Parquet originales y etiquetados deben corresponder entre sí. Los a
 - Aplicación web: <http://localhost:5173>
 - API: <http://127.0.0.1:8000/api/>
 - Swagger: <http://127.0.0.1:8000/docs/>
-- ReDoc: <http://127.0.0.1:8000/redoc/>
 - Esquema OpenAPI: <http://127.0.0.1:8000/api/schema/>
 
 Endpoints principales:
@@ -145,7 +144,6 @@ frontend/      Aplicación web React y TypeScript
 data/          Datos y bloques Parquet procesados (locales)
 models/        Modelos entrenados y artefactos de vectorización (locales)
 notebooks/     Análisis, preparación de datos y experimentos
-reports/       Figuras e informes generados
 ```
 
 ## Detener los servicios
