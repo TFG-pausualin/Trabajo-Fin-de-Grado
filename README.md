@@ -89,16 +89,17 @@ Abre la dirección que indique Vite, normalmente <http://localhost:5173>.
 
 ## Datos y artefactos necesarios
 
-Los archivos de datos y modelos se excluyen del control de versiones. Para disponer del catálogo, mostrar las reseñas históricas y clasificar opiniones, asegúrate de tener localmente:
+El repositorio incluye los datos preparados y los modelos necesarios para ejecutar la aplicación. Se almacenan directamente en Git, por lo que clonar el repositorio descarga aproximadamente 1,1 GB de datos.
 
 - Los metadatos preparados en `data/provisional/metadatos_videojuegos.parquet`.
-- Los metadatos originales en `data/raiz/meta_Video_Games.jsonl.gz`.
 - Los bloques Parquet originales en `data/procesado/resenas_sin_duplicados/`.
 - Sus bloques etiquetados correspondientes en `data/procesado/resenas_etiquetadas/`.
 - El vectorizador TF-IDF en `models/primera_iteracion/vectorizacion/vectorizador_tfidf.joblib`.
 - El modelo SVM en `models/segunda_iteracion/svm/modelo_optimizado/modelo_svm_optimizado.joblib`.
 
 Los bloques Parquet originales y etiquetados deben corresponder entre sí. Los artefactos del clasificador deben ser los generados para este proyecto y compatibles entre ellos.
+
+El archivo de metadatos original `data/raiz/meta_Video_Games.jsonl.gz` no se incluye: sus 103,10 MB superan el límite de 100 MB por archivo de GitHub. Solo hace falta para repetir el procesamiento de los datos; la aplicación desplegada utiliza los metadatos preparados incluidos arriba. Para reproducir ese procesamiento, descarga el archivo de metadatos de la categoría Video Games del conjunto [Amazon Reviews'23](https://amazon-reviews-2023.github.io/) y guárdalo con ese nombre en `data/raiz/`.
 
 ## Direcciones y API
 

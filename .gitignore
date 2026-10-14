@@ -6,7 +6,7 @@ __pycache__/
 *.py[cod]
 .ipynb_checkpoints/
 data/raiz/
-data/provisional/
+data/provisional/resenas_videojuegos_bloques
 data/procesado/
 data/reseñas_generadas.sqlite3
 /node_modules/
@@ -38,6 +38,15 @@ models/segunda_iteracion/svm/predicciones_svm.npy
 models/segunda_iteracion/svm/modelo_svm.joblib
 models/segunda_iteracion/svm/metricas_svm.json
 models/segunda_iteracion/svm/informe_clasificacion_svm.csv
+
+# Datos preparados necesarios para desplegar la aplicación.
+!data/provisional/metadatos_videojuegos.parquet
+!data/procesado/
+data/procesado/*
+!data/procesado/resenas_sin_duplicados/
+!data/procesado/resenas_sin_duplicados/*.parquet
+!data/procesado/resenas_etiquetadas/
+!data/procesado/resenas_etiquetadas/*.parquet
 .gitignore
 models/primera_iteracion/vectorizacion/X_test_tfidf.npz
 models/primera_iteracion/vectorizacion/y_test.npy
