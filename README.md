@@ -89,12 +89,19 @@ Abre la dirección que indique Vite, normalmente <http://localhost:5173>.
 
 ## Datos y artefactos necesarios
 
-Los archivos de datos y modelos se excluyen del control de versiones. Para disponer del catálogo, mostrar las reseñas históricas y clasificar opiniones, asegúrate de tener localmente:
+Por motivos de tamaño, los conjuntos de datos utilizados durante el desarrollo del proyecto no se incluyen en este repositorio.
 
-- El vectorizador TF-IDF en `models/primera_iteracion/vectorizacion/vectorizador_tfidf.joblib`.
-- El modelo SVM en `models/segunda_iteracion/svm/modelo_optimizado/modelo_svm_optimizado.joblib`.
+Para reconstruir el entorno de trabajo completo es necesario descargar previamente el conjunto de datos **Amazon Reviews 2023** y situar los archivos originales en las rutas indicadas por los scripts de procesamiento.
 
-Los bloques Parquet originales y etiquetados deben corresponder entre sí. Los artefactos del clasificador deben ser los generados para este proyecto y compatibles entre ellos.
+Una vez disponibles los datos originales, los conjuntos de datos intermedios pueden regenerarse ejecutando el flujo de procesamiento descrito en la memoria del proyecto.
+
+Para ejecutar la aplicación deben estar disponibles los siguientes artefactos:
+
+- Metadatos de videojuegos: `data/provisional/metadatos_videojuegos.parquet`
+- Vectorizador TF-IDF: `models/primera_iteracion/vectorizacion/vectorizador_tfidf.joblib`
+- Modelo SVM optimizado: `models/segunda_iteracion/svm/modelo_optimizado/modelo_svm_optimizado.joblib`
+
+Los artefactos del clasificador deben proceder del mismo proceso de entrenamiento para garantizar la compatibilidad entre la vectorización TF-IDF y el modelo de clasificación.
 
 ## Direcciones y API
 
